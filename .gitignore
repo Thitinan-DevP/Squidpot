@@ -1,0 +1,33 @@
+# Environment and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*private-key*
+*mnemonic*
+keystore/
+keystores/
+
+# Foundry generated output
+contracts/out/
+contracts/cache/
+contracts/broadcast/
+contracts/coverage/
+contracts/lcov.info
+
+# Node and frontend artifacts
+frontend/node_modules/
+frontend/.next/
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+frontend/coverage/
+frontend/tsconfig.tsbuildinfo
+frontend/browser-verification/
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -8,7 +8,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="min-h-screen">
       <header className="site-header">
         <div className="shell header-inner">
-          <Link className="brand" href="/" aria-label="SquidPot home">
+          <Link className="brand" href="/" aria-label="SquidPot หน้าหลัก">
             <span className="brand-mark" aria-hidden="true">
               <svg viewBox="0 0 36 36" fill="none">
                 <rect width="36" height="36" rx="12" fill="currentColor" />
@@ -19,25 +19,25 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <path d="M16.2 20.1h3.6" stroke="#26343B" strokeWidth="1.3" strokeLinecap="round" />
               </svg>
             </span>
-            <span className="brand-copy"><strong>SquidPot</strong><small>ACADEMIC PROTOTYPE</small></span>
+            <span className="brand-copy"><strong>SquidPot</strong><small>เกมทดลองเพื่อการศึกษา</small></span>
           </Link>
           <div className="header-right">
             <span className="network-pill">
               <span className="network-dot" aria-hidden="true" />
-              {frontendConfig?.chain.name ?? "Configuration needed"}
+              {frontendConfig ? "เครือข่ายทดลอง BNB" : "ยังไม่ได้ตั้งค่า"}
             </span>
             <MainNavigation />
           </div>
         </div>
       </header>
       <div className="academic-notice" role="note">
-        <span className="notice-label">TESTNET ONLY</span>
-        <span>Testnet Academic Prototype — Tokens Have No Real-World Value</span>
+        <span className="notice-label">เครือข่ายทดลอง</span>
+        <span>ระบบทดลองเพื่อการศึกษา · PIGGY ไม่มีมูลค่าเงินจริง</span>
       </div>
       <main className="shell main-content">{children}</main>
       <footer className="shell footer-note">
-        <span>Built for academic research on test networks.</span>
-        <span>PIGGY has no real-world value.</span>
+        <span>สร้างขึ้นเพื่อการศึกษาและทดลองระบบบล็อกเชน</span>
+        <span>PIGGY ไม่มีมูลค่าเงินจริง</span>
       </footer>
     </div>
   );

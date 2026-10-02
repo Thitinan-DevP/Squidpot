@@ -7,13 +7,13 @@ type Props = { slot?: bigint; previous?: bigint; prize?: bigint; busy: boolean; 
 
 export function ClaimsPanel({ slot, previous, prize, busy, onClaim }: Props) {
   const claims: Claim[] = [
-    { label: "Slot rewards", amount: slot, action: "claim-slot" },
-    { label: "Previous-player rewards", amount: previous, action: "claim-previous" },
-    { label: "Prize", amount: prize, action: "claim-prize" },
+    { label: "รางวัลจากการสุ่ม", amount: slot, action: "claim-slot" },
+    { label: "ส่วนแบ่งผู้เล่นก่อนหน้า", amount: previous, action: "claim-previous" },
+    { label: "รางวัลประจำรอบ", amount: prize, action: "claim-prize" },
   ];
   return (
     <section className="card" aria-labelledby="claims-heading">
-      <div className="section-heading"><div><p className="eyebrow">Pull payments</p><h2 id="claims-heading">Your pending claims</h2></div></div>
+      <div className="section-heading"><div><p className="eyebrow">ยอดที่รับได้</p><h2 id="claims-heading">รางวัลของฉัน</h2></div></div>
       <div className="claim-list">
         {claims.map((claim) => (
           <div className="claim-row" key={claim.action}>
@@ -22,11 +22,11 @@ export function ClaimsPanel({ slot, previous, prize, busy, onClaim }: Props) {
               className="button button-secondary"
               disabled={busy || claim.amount === undefined || claim.amount === BigInt(0)}
               onClick={() => onClaim(claim.action)}
-            >Claim</button>
+            >{claim.amount === undefined ? "กำลังอ่าน" : claim.amount === BigInt(0) ? "ยังไม่มี" : "รับ PIGGY"}</button>
           </div>
         ))}
       </div>
-      <p className="muted">Claim values remain unchanged until the matching transaction receipt confirms.</p>
+      <p className="muted">ยอดรางวัลจะเปลี่ยนหลังเครือข่ายยืนยันรายการรับแล้วเท่านั้น</p>
     </section>
   );
 }

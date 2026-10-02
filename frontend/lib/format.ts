@@ -6,7 +6,7 @@ export function formatPiggy(value: bigint | undefined): string {
 }
 
 export function shortAddress(address: string | undefined): string {
-  if (!address) return "Not connected";
+  if (!address) return "ยังไม่ได้เชื่อมต่อ";
   return `${address.slice(0, 6)}…${address.slice(-4)}`;
 }
 
@@ -20,7 +20,7 @@ export function formatCountdown(deadline: bigint | undefined, blockTimestamp: bi
 
 export function formatChainTimestamp(timestamp: bigint | undefined): string {
   if (timestamp === undefined || timestamp === BigInt(0)) return "—";
-  return new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" })
+  return new Intl.DateTimeFormat("th-TH", { dateStyle: "medium", timeStyle: "short" })
     .format(Number(timestamp) * 1000);
 }
 

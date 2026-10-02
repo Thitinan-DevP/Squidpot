@@ -128,7 +128,7 @@ The original preflight recommended these steps before a live SquidPot deployment
 4. Keep the Academic Treasury address, confirmation count, billing mode, token, coordinator, key hash, and subscription ID in the ignored local Foundry environment. Keep private-key values out of chat and version control.
 5. ~~Deploy SquidPot and add it as the subscription consumer.~~ Completed; on-chain configuration was checked before the consumer authorization transaction.
 6. ~~Initialize SquidPot with 100,500 Testnet PIGGY.~~ Completed after user authorization; both approval and initialization transactions succeeded and on-chain accounting surplus is zero.
-7. ~~Run a controlled Play/VRF request/fulfillment/claim smoke test.~~ Completed. Frontend Testnet configuration, public contract reads, and the first UI polish pass are implemented; review the preview before any site deployment.
+7. ~~Run a controlled Play/VRF request/fulfillment/claim smoke test.~~ Completed. The frontend is deployed to Vercel from `main`; set the public Testnet environment variables in Vercel and complete an interactive wallet review before sharing it.
 
 ## 6. Deployment safety decision
 
@@ -163,7 +163,7 @@ The user authorized Testnet deployment preparation and selected a new PIGGY depl
 | Claim transaction | `0x5453e641ab0eff5f7f3499eb2e75b0202d3d24dd045a105d3a72fc5ef793ed8b`; success at block `0x803d1fb`; read-only check confirms pending slot reward is zero |
 | Gameplay / VRF smoke test | Play, fulfillment, and claim all succeeded end to end on BNB Testnet |
 | VRF billing after smoke test | Subscription has one request and `0.0497226816 tBNB` remaining |
-| Frontend | Local public Testnet config is ignored; `/`, `/wallet`, and `/how-it-works` return HTTP 200; lint, TypeScript, and production build pass |
+| Frontend | Local public Testnet config is ignored; `/`, `/wallet`, and `/how-it-works` return HTTP 200; lint, TypeScript, and production build pass; Vercel deploy returns HTTP 200 but requires the public environment values before connecting to the contracts |
 
 The successful Foundry deployment command used a 0.1 gwei priority fee and a 0.2 gwei max fee after the RPC rejected the initial fee with a minimum-tip error. The two earlier attempts stopped before broadcast: one used an unsupported `--env-file` flag, and one exposed that Foundry needs the key in `0x`-prefixed 32-byte hex format. The private key remains only in ignored local environment files. A Foundry cache file explicitly marked as containing sensitive values was removed after execution.
 

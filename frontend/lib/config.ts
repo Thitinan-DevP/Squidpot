@@ -2,7 +2,7 @@ import { bscTestnet } from "wagmi/chains";
 import { defineChain, getAddress, isAddress, type Chain } from "viem";
 
 export const CONFIGURATION_MESSAGE =
-  "Contract addresses are not configured. Connect local Anvil or BNB Testnet deployment to use SquidPot.";
+  "ระบบยังเชื่อมต่อสัญญาไม่สำเร็จ กรุณาตั้งค่าระบบเครือข่ายทดลองก่อนใช้งาน";
 
 const raw = {
   piggyAddress: process.env.NEXT_PUBLIC_PIGGY_TOKEN_ADDRESS,

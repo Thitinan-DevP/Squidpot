@@ -4,16 +4,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const links = [
-  { href: "/", label: "Play" },
-  { href: "/wallet", label: "Wallet" },
-  { href: "/how-it-works", label: "How it works" },
+  { href: "/", label: "เล่นเกม" },
+  { href: "/wallet", label: "กระเป๋า" },
+  { href: "/how-it-works", label: "วิธีใช้งาน" },
 ];
 
 export function MainNavigation() {
   const pathname = usePathname();
 
   return (
-    <nav aria-label="Main navigation" className="main-nav">
+    <nav aria-label="เมนูหลัก" className="main-nav">
       {links.map((link) => {
         const active = pathname === link.href;
         return (

@@ -2,13 +2,22 @@
 
 import { formatChainTimestamp, formatCountdown, formatPiggy } from "@/lib/format";
 import { frontendConfig } from "@/lib/config";
-import { uiStateMessages, type UiState } from "@/lib/ui-state";
+import { requestStatusText, roundPhaseText, type UiState } from "@/lib/ui-state";
 import { useSquidPot } from "@/lib/use-squidpot";
 import { ClaimsPanel } from "@/components/ClaimsPanel";
 import { PiggyBankTransactionFeedback } from "@/components/PiggyBankTransactionFeedback";
 import { SessionActivityList } from "@/components/SessionActivity";
 import { TransactionStatus } from "@/components/TransactionStatus";
 import { WalletConnection } from "@/components/WalletConnection";
+
+const actionNames: Record<string, string> = {
+  play: "เล่นเกม",
+  approve: "อนุมัติใช้ PIGGY",
+  settle: "ปิดรอบ",
+  "claim-slot": "รับรางวัลจากการสุ่ม",
+  "claim-previous": "รับส่วนแบ่งผู้เล่นก่อนหน้า",
+  "claim-prize": "รับรางวัลประจำรอบ",
+};
 
 export function SquidPotDashboard({ walletPage = false }: { walletPage?: boolean }) {
   const pot = useSquidPot();
@@ -23,7 +32,6 @@ export function SquidPotDashboard({ walletPage = false }: { walletPage?: boolean
   const isActive = pot.transactionState !== undefined;
   const canPlay = readsReady && pot.isConnected && pot.fundingInitialized && balanceSufficient && pot.readyState === "READY_TO_PLAY" && !isActive;
   const canSettle = pot.roundPhase === "Expired" && pot.correctNetwork && pot.isConnected && !isActive;
-  const latestIsExpired = pot.latestRequest?.status === "EXPIRED";
   const claim = (action: "claim-slot" | "claim-previous" | "claim-prize") => {
     const functionName = action === "claim-slot" ? "claimSlotRewards"
       : action === "claim-previous" ? "claimPreviousRewards" : "claimPrize";
@@ -32,22 +40,32 @@ export function SquidPotDashboard({ walletPage = false }: { walletPage?: boolean
 
   const displayedState: UiState = pot.readyState;
   const confirmedMessage = pot.confirmedAction
-    ? `${pot.confirmedAction === "play" ? "Play" : pot.confirmedAction.replaceAll("-", " ")} transaction confirmed on-chain.`
+    ? `ยืนยัน${actionNames[pot.confirmedAction] ?? "รายการ"}บนเครือข่ายแล้ว`
+    : undefined;
+  const stateDescription = !readsReady
+    ? "กำลังอ่านข้อมูลจากสัญญา ปุ่มทำรายการจะใช้ได้เมื่ออ่านข้อมูลครบ"
+    : readsReady && pot.isConnected && !balanceSufficient
+      ? "ยอด PIGGY ของคุณยังไม่ถึง 10 PIGGY ซึ่งเป็นค่าเล่นต่อครั้ง"
+      : undefined;
+  const requestMessage = pot.latestRequest
+    ? `คำขอสุ่ม ${pot.latestRequest.id}: ${requestStatusText(pot.latestRequest.status)}${pot.latestRequest.status === "FULFILLED" ? ` · ได้รับ ${formatPiggy(pot.latestRequest.reward)}` : pot.latestRequest.status === "EXPIRED" ? " · ระบบไม่ได้คืนค่าเล่น" : " · ยังไม่แสดงรางวัลจนกว่าจะสุ่มเสร็จ"}`
     : undefined;
 
   return (
     <div className={`page-stack dashboard ${walletPage ? "dashboard-wallet" : "dashboard-play"}`}>
       <section className="page-intro">
         <div className="intro-copy">
-          <p className="eyebrow">{frontendConfig?.chain.name ?? "Academic Web3 prototype"} <span aria-hidden="true">·</span> VRF v2.5</p>
-          <h1>{walletPage ? "Your wallet" : "Play with PIGGY"}</h1>
-          <p>{walletPage ? "Balances and claimable amounts are read directly from the deployed contracts." : "A transparent research game. Follow the round, make a play, and track every confirmed on-chain step."}</p>
+          <p className="eyebrow">เครือข่ายทดลอง BNB <span aria-hidden="true">·</span> สุ่มผลด้วย Chainlink</p>
+          <h1>{walletPage ? "กระเป๋าของฉัน" : "ทดลองเล่นด้วย PIGGY"}</h1>
+          <p>{walletPage
+            ? "ดูยอด PIGGY และกดรับรางวัลที่เป็นของคุณ ข้อมูลอ่านจากสัญญาบนเครือข่ายโดยตรง"
+            : "เชื่อมต่อกระเป๋า แล้วทำตามขั้นตอนที่ระบบแสดง ค่าเล่นครั้งละ 10 PIGGY และต้องรอเครือข่ายยืนยันผล"}</p>
         </div>
         {frontendConfig && !walletPage && (
-          <div className="intro-stamp" aria-label="Deployment network">
-            <span className="stamp-label">LIVE CONTRACT DATA</span>
-            <strong>{frontendConfig.chain.name}</strong>
-            <span>Chain ID {frontendConfig.chainId}</span>
+          <div className="intro-stamp" aria-label="เครือข่ายที่ใช้งาน">
+            <span className="stamp-label">เครือข่ายที่ใช้งาน</span>
+            <strong>เครือข่ายทดลอง BNB Smart Chain</strong>
+            <span>รหัสเครือข่าย {frontendConfig.chainId}</span>
           </div>
         )}
       </section>
@@ -62,68 +80,86 @@ export function SquidPotDashboard({ walletPage = false }: { walletPage?: boolean
         switchNetwork={pot.switchToConfiguredChain}
       />
 
+      <TransactionStatus state={displayedState} hash={pot.transactionHash} error={pot.transactionError}
+        description={stateDescription}
+        confirmedMessage={confirmedMessage}
+        secondaryMessage={requestMessage && (displayedState === "VRF_WAITING" || displayedState === "VRF_FULFILLED" || displayedState === "VRF_EXPIRED") ? requestMessage : undefined} />
+
       {walletPage ? (
         <>
           <section className="card" aria-labelledby="wallet-values-heading">
-            <p className="eyebrow">Direct contract reads</p><h2 id="wallet-values-heading">Wallet values</h2>
+            <p className="eyebrow">ข้อมูลจากกระเป๋า</p>
+            <h2 id="wallet-values-heading">ยอด PIGGY ของฉัน</h2>
             <dl className="metric-grid two-column">
-              <div><dt>Wallet address</dt><dd title={pot.address}>{pot.address ?? "Not connected"}</dd></div>
-              <div><dt>PIGGY balance</dt><dd>{formatPiggy(pot.tokenBalance)}</dd></div>
-              <div><dt>PIGGY allowance</dt><dd>{formatPiggy(pot.allowance)}</dd></div>
-              <div><dt>Network</dt><dd>{pot.correctNetwork ? (frontendConfig?.chain.name ?? "Configured network") : "Not on configured network"}</dd></div>
-              <div><dt>Chain ID</dt><dd>{pot.chainId ?? "—"}</dd></div>
+              <div><dt>ที่อยู่กระเป๋า</dt><dd title={pot.address}>{pot.address ?? "ยังไม่ได้เชื่อมต่อ"}</dd></div>
+              <div><dt>ยอดคงเหลือ</dt><dd>{pot.isConnected && pot.tokenBalance === undefined ? "กำลังอ่านยอด…" : formatPiggy(pot.tokenBalance)}</dd></div>
+              <div><dt>ยอดที่อนุมัติให้สัญญาใช้</dt><dd>{formatPiggy(pot.allowance)}</dd></div>
+              <div><dt>เครือข่าย</dt><dd>{pot.correctNetwork ? "เครือข่ายทดลอง BNB Smart Chain" : "ยังไม่ได้เชื่อมต่อเครือข่ายทดลอง"}</dd></div>
             </dl>
-            {approvalNeeded && <button className="button button-primary" disabled={!pot.correctNetwork || isActive} onClick={() => void pot.executeWrite("approve", "approve")}>Approve exactly 10 PIGGY</button>}
+            {approvalNeeded && <button className="button button-primary" disabled={!pot.correctNetwork || isActive} onClick={() => void pot.executeWrite("approve", "approve")}>อนุมัติใช้ 10 PIGGY</button>}
+            {pot.isConnected && !pot.correctNetwork && <p className="muted">เปลี่ยนเครือข่ายในกระเป๋าเป็น BNB Smart Chain Testnet ก่อนทำรายการ</p>}
           </section>
           <ClaimsPanel slot={pot.pendingSlotRewards} previous={pot.pendingPreviousRewards} prize={pot.pendingPrize} busy={isActive || !pot.correctNetwork} onClaim={claim} />
           <SessionActivityList activity={pot.activity} requests={pot.requests} />
         </>
       ) : (
         <>
-          <section className="card round-summary-card" aria-labelledby="round-summary-heading">
-            <div className="section-heading"><div><p className="eyebrow">Confirmed contract state</p><h2 id="round-summary-heading">Current round</h2></div><span className={`status-pill ${pot.roundPhase === "Open" ? "status-ok" : "status-neutral"}`}>{pot.roundPhase}</span></div>
-            <dl className="metric-grid">
-              <div><dt>Current prize pool</dt><dd>{formatPiggy(pot.currentPrizePool)}</dd></div>
-              <div><dt>Round ID</dt><dd>{pot.currentRoundId?.toString() ?? "—"}</dd></div>
-              <div><dt>Countdown</dt><dd>{pot.roundPhase === "Waiting" ? "No countdown while waiting" : countdown ?? "Reading latest block"}</dd></div>
-              <div><dt>Available Slot Reserve</dt><dd>{formatPiggy(pot.availableSlotReserve)}</dd></div>
-              <div><dt>Active pending requests</dt><dd>{waitCount}</dd></div>
-              <div><dt>Hard deadline</dt><dd>{formatChainTimestamp(pot.hardDeadline)}</dd></div>
-              <div><dt>Pause status</dt><dd>{pot.paused === undefined ? "Reading contract" : pot.paused ? "Paused" : "Not paused"}</dd></div>
-              <div><dt>Recorded last player</dt><dd>{pot.lastPlayer ?? "—"}</dd></div>
-            </dl>
-            {pot.roundPhase === "Expired" && <p className="inline-warning" role="status">Round expired — settlement required. The recorded last player receives the prize, not necessarily the caller.</p>}
-            {pot.roundPhase === "Open" && pot.deadline !== undefined && pot.chainTimestamp !== undefined && pot.deadline <= pot.chainTimestamp && <p className="muted">The latest block has reached the deadline; waiting for the contract’s next confirmed round-status read.</p>}
-          </section>
-
           <section className="card play-controls-card" aria-labelledby="play-controls-heading">
-            <div className="section-heading"><div><p className="eyebrow">Entry</p><h2 id="play-controls-heading">Play the round</h2></div><span className="entry-amount">10 <small>PIGGY</small></span></div>
-            <dl className="metric-grid two-column">
-              <div><dt>Your PIGGY balance</dt><dd>{pot.isConnected ? formatPiggy(pot.tokenBalance) : "Connect wallet to view"}</dd></div>
-              <div><dt>Your PIGGY allowance</dt><dd>{pot.isConnected ? formatPiggy(pot.allowance) : "Connect wallet to view"}</dd></div>
-            </dl>
-            {approvalNeeded && <button className="button button-secondary" disabled={!pot.correctNetwork || isActive} onClick={() => void pot.executeWrite("approve", "approve")}>Approve exactly 10 PIGGY</button>}
+            <div className="section-heading">
+              <div><p className="eyebrow">เริ่มเล่น</p><h2 id="play-controls-heading">เล่นรอบนี้</h2></div>
+              <span className="entry-amount">10 <small>PIGGY / ครั้ง</small></span>
+            </div>
+            <div className="balance-summary">
+              <span>ยอด PIGGY ของคุณ</span>
+              <strong>{pot.isConnected ? pot.tokenBalance === undefined ? "กำลังอ่านยอด…" : formatPiggy(pot.tokenBalance) : "เชื่อมต่อกระเป๋าเพื่อดูยอด"}</strong>
+            </div>
+            {approvalNeeded && (
+              <div className="next-action">
+                <p>ก่อนเล่น ต้องอนุมัติให้สัญญาใช้ 10 PIGGY</p>
+                <button className="button button-secondary" disabled={!pot.correctNetwork || isActive} onClick={() => void pot.executeWrite("approve", "approve")}>อนุมัติใช้ 10 PIGGY</button>
+              </div>
+            )}
             <div className="button-row play-actions">
               <button className="button button-primary play-button" disabled={!canPlay} onClick={() => void pot.executeWrite("play", "play")}>
-                Play · 10 PIGGY
+                เล่นเลย · 10 PIGGY
               </button>
-              <button className="button button-secondary" disabled={!canSettle} onClick={() => void pot.executeWrite("settle", "settleRound")}>Settle round</button>
+              {pot.roundPhase === "Expired" && <button className="button button-secondary" disabled={!canSettle} onClick={() => void pot.executeWrite("settle", "settleRound")}>ปิดรอบ</button>}
             </div>
-            {!chainReadsReady && pot.isConnected && pot.correctNetwork && <p className="muted" role="status">Reading confirmed contract state. Actions remain disabled until required values are available.</p>}
-            {chainReadsReady && !pot.isConnected && <p className="muted" role="status">Round values are live from the contract. Connect a wallet to view your balance or play.</p>}
-            {pot.isConnected && chainReadsReady && !walletReadsReady && <p className="muted" role="status">Reading your wallet values from the configured contracts.</p>}
-            {readsReady && pot.isConnected && !balanceSufficient && <p className="inline-warning" role="status">Your confirmed PIGGY balance is below the 10 PIGGY entry.</p>}
-            {pot.readError && <p className="inline-error" role="alert">Contract reads failed. Retry or check the configured RPC; values are not substituted.</p>}
+            {!pot.isConnected && <p className="muted">เริ่มจากเชื่อมต่อกระเป๋าด้านบน แล้วระบบจะแสดงปุ่มที่ต้องกดต่อ</p>}
+            {pot.isConnected && !pot.correctNetwork && <p className="inline-warning">เปลี่ยนเครือข่ายเป็นเครือข่ายทดลอง BNB Smart Chain ก่อนเล่น</p>}
+            {readsReady && pot.isConnected && !balanceSufficient && <p className="inline-warning" role="status">ยอดของคุณยังไม่ถึง 10 PIGGY ซึ่งเป็นค่าเล่นต่อครั้ง</p>}
+            {readsReady && pot.isConnected && !balanceSufficient && <p className="muted">หากยังไม่มี PIGGY โปรดขอรับจากผู้ดูแลการทดลองให้โอนบนเครือข่ายทดลอง</p>}
+            {pot.readError && <p className="inline-error" role="alert">อ่านข้อมูลจากสัญญาไม่สำเร็จ ตรวจสอบการเชื่อมต่อเครือข่ายแล้วลองใหม่</p>}
+          </section>
+
+          <section className="card round-summary-card" aria-labelledby="round-summary-heading">
+            <div className="section-heading">
+              <div><p className="eyebrow">ข้อมูลจากสัญญาบนเครือข่าย</p><h2 id="round-summary-heading">สถานะรอบปัจจุบัน</h2></div>
+              <span className={`status-pill ${pot.roundPhase === "Open" ? "status-ok" : "status-neutral"}`}>{roundPhaseText(pot.roundPhase)}</span>
+            </div>
+            <dl className="metric-grid two-column round-highlights">
+              <div><dt>รางวัลประจำรอบ</dt><dd>{formatPiggy(pot.currentPrizePool)}</dd></div>
+              <div><dt>{pot.roundPhase === "Waiting" ? "สถานะเวลา" : "เวลาที่เหลือ"}</dt><dd>{pot.roundPhase === "Waiting" ? "รอผู้เล่นเริ่มรอบ" : countdown ?? "กำลังอ่านข้อมูล"}</dd></div>
+            </dl>
+            <details className="advanced-rules round-details">
+              <summary>ดูข้อมูลรอบเพิ่มเติม</summary>
+              <dl className="metric-grid two-column">
+                <div><dt>หมายเลขรอบ</dt><dd>{pot.currentRoundId?.toString() ?? "—"}</dd></div>
+                <div><dt>ยอดสำรองรางวัลสุ่ม</dt><dd>{formatPiggy(pot.availableSlotReserve)}</dd></div>
+                <div><dt>คำขอสุ่มที่กำลังรอ</dt><dd>{waitCount}</dd></div>
+                <div><dt>เวลาปิดรอบสูงสุด</dt><dd>{formatChainTimestamp(pot.hardDeadline)}</dd></div>
+                <div><dt>สถานะระบบ</dt><dd>{pot.paused === undefined ? "กำลังอ่านข้อมูล" : pot.paused ? "พักการเล่น" : "เปิดใช้งาน"}</dd></div>
+                <div><dt>ผู้เล่นคนล่าสุด</dt><dd title={pot.lastPlayer}>{pot.lastPlayer ?? "ยังไม่มี"}</dd></div>
+              </dl>
+            </details>
+            {pot.roundPhase === "Expired" && <p className="inline-warning" role="status">หมดเวลารอบแล้ว ผู้เล่นคนสุดท้ายที่บันทึกไว้มีสิทธิ์รับรางวัล ใครก็ได้ช่วยกดปิดรอบได้</p>}
+            {pot.roundPhase === "Open" && pot.deadline !== undefined && pot.chainTimestamp !== undefined && pot.deadline <= pot.chainTimestamp && <p className="muted">ถึงเวลาปิดรอบแล้ว กำลังรอข้อมูลยืนยันจากสัญญา</p>}
           </section>
 
           <div className="content-grid">
             <ClaimsPanel slot={pot.pendingSlotRewards} previous={pot.pendingPreviousRewards} prize={pot.pendingPrize} busy={isActive || !pot.correctNetwork} onClaim={claim} />
             <PiggyBankTransactionFeedback confirmedEventId={pot.confirmedPlayEvent} />
           </div>
-
-          <TransactionStatus state={displayedState} hash={pot.transactionHash} error={pot.transactionError}
-            description={!readsReady ? "Reading confirmed contract state. No gameplay values are substituted." : readsReady && !balanceSufficient ? "Your confirmed PIGGY balance is below the 10 PIGGY entry; Play is disabled." : undefined}
-            confirmedMessage={confirmedMessage ?? (pot.latestRequest ? `Request ${pot.latestRequest.id}: ${pot.latestRequest.status}${pot.latestRequest.status === "FULFILLED" ? ` · reward ${formatPiggy(pot.latestRequest.reward)}` : latestIsExpired ? " · entry fee is not refunded" : " · no reward displayed until fulfillment"}` : uiStateMessages[displayedState])} />
 
           <SessionActivityList activity={pot.activity} requests={pot.requests} />
         </>

@@ -29,7 +29,7 @@ import {
   subscribeSessionActivity,
   type SessionActivity,
 } from "@/lib/format";
-import { deriveUiState, transactionErrorState, type UiState } from "@/lib/ui-state";
+import { deriveUiState, friendlyWalletError, transactionErrorState, type UiState } from "@/lib/ui-state";
 import { confirmedPlayAnimationKey } from "@/lib/confirmed-play";
 
 export type RequestView = {
@@ -252,7 +252,7 @@ export function useSquidPot() {
     } catch (error) {
       const state = transactionErrorState(error);
       setTransactionState(state);
-      setTransactionError(error instanceof Error ? error.message : "Transaction could not be completed.");
+      setTransactionError(friendlyWalletError(error));
       observedActivity = createSessionActivity({
         id: observedActivity?.id,
         action,

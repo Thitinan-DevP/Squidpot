@@ -28,10 +28,10 @@ export function Providers({ children }: { children: ReactNode }) {
     return (
       <AppShell>
         <section className="card config-state" aria-labelledby="config-title">
-          <p className="eyebrow">Configuration required</p>
-          <h1 id="config-title">SquidPot is not connected to a deployment</h1>
+          <p className="eyebrow">ยังไม่ได้ตั้งค่าระบบ</p>
+          <h1 id="config-title">SquidPot ยังเชื่อมต่อเครือข่ายทดลองไม่ได้</h1>
           <p role="status">{CONFIGURATION_MESSAGE}</p>
-          <p className="muted">No balances, rewards, countdowns, or gameplay are shown until valid environment configuration is provided.</p>
+          <p className="muted">ตอนนี้ยังไม่แสดงยอดเงิน รางวัล หรือปุ่มเล่น เพื่อไม่ให้เข้าใจว่าเป็นข้อมูลจริง</p>
         </section>
       </AppShell>
     );

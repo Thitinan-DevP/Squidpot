@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { deriveUiState, uiStateMessages, type UiState } from "@/lib/ui-state";
+import { deriveUiState, uiStateMessages, uiStateTitles, type UiState } from "@/lib/ui-state";
 import { TransactionStatus } from "@/components/TransactionStatus";
 import { render } from "@testing-library/react";
 
@@ -20,7 +20,7 @@ const connected = {
 describe("SquidPot UI state model", () => {
   it("describes missing configuration without implying gameplay", () => {
     expect(deriveUiState({ ...connected, configured: false })).toBe("CONTRACT_NOT_CONFIGURED");
-    expect(uiStateMessages.CONTRACT_NOT_CONFIGURED).toContain("Contract addresses are not configured.");
+    expect(uiStateMessages.CONTRACT_NOT_CONFIGURED).toContain("ตั้งค่าเครือข่ายทดลอง");
   });
 
   it("derives disconnected and wrong-network states", () => {
@@ -46,7 +46,7 @@ describe("SquidPot UI state model", () => {
     for (const state of states) {
       expect(uiStateMessages[state].length).toBeGreaterThan(10);
       const { getByRole, getByText, unmount } = render(<TransactionStatus state={state} />);
-      expect(getByRole("heading", { name: state.replaceAll("_", " ") })).toBeInTheDocument();
+      expect(getByRole("heading", { name: uiStateTitles[state] })).toBeInTheDocument();
       expect(getByText(uiStateMessages[state])).toBeInTheDocument();
       unmount();
     }

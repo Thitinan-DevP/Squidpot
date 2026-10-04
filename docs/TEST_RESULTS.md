@@ -108,26 +108,29 @@ Commands ran from `D:\Squidpot\frontend` unless noted:
 |---|---|
 | `npm install` | Initial sandbox attempt failed because a required package was not cached (`ENOTCACHED`). Retried with approved package-registry access: PASS, dependencies installed. The initial audit reported two moderate findings in the Vitest development dependency tree. |
 | `npm install --save-dev vitest@^4.1.11` | PASS; upgraded Vitest and refreshed the lockfile. Subsequent `npm audit --json` reported 0 vulnerabilities (exit 0). |
-| `npm run lint` | PASS, exit 0 (`eslint app components lib tests`). |
-| `npm run typecheck` | PASS, exit 0. |
-| `npm test` | PASS: 4 test files, 19 tests passed, 0 failed. |
-| `npm run build` | PASS, exit 0; production build generated `/`, `/wallet`, and `/how-it-works` routes (plus Next.js `/_not-found`). |
+| `npm run lint` | PASS, exit 0 (`eslint app components lib tests`, 0 errors, 0 warnings). |
+| `npm run typecheck` | PASS, exit 0 (`tsc --noEmit`). |
+| `npm test` | PASS: 4 test files, 21 tests passed, 0 failed (`tests/wheel.test.tsx`, `tests/claims-accessibility.test.tsx`, `tests/ui-state.test.tsx`, `tests/configuration.test.tsx`). |
+| `npm run build` | PASS, exit 0; Next.js 16 production build generated `/`, `/wallet`, and `/how-it-works` routes (plus Next.js `/_not-found`). |
 
-The frontend tests cover missing configuration, disconnected/wrong-network states, approval/play/VRF/settlement/claim state rendering, confirmed-play-only coin motion, rejected/failed transaction non-animation, reduced-motion behavior, and accessibility checks. They are component/state tests; they do not constitute a live-chain or deployed-contract integration test.
+The frontend tests cover the single on-chain PIGGY reward wheel, missing configuration, disconnected/wrong-network states, approval/play/VRF/settlement/claim state rendering, receipt-gated wheel spin, presentation-only `Stop & Reveal` safety proof, reduced-motion behavior, and accessibility checks. They are component/state tests; they do not constitute a live-chain or deployed-contract integration test.
 
 ### Local route and browser checks
 
-With the local development server running, `curl.exe` returned HTTP 200 for each of `GET /`, `GET /wallet`, and `GET /how-it-works`. This is an HTTP route smoke check, not a visual browser verification.
+- With the local production server running, `curl.exe` returned HTTP 200 for each of `GET /`, `GET /wallet`, and `GET /how-it-works`. HTML response confirmed server-side rendering of the `RewardWheel`, segment definitions, and notice banners.
+- Browser subagent automation attempted to run `open_browser_url` for live visual capture. The tool failed to initialize because the underlying Playwright driver download failed (`404 Not Found` for `playwright-1.57.0-win32_x64.zip` from azureedge CDN). Per system instructions, this tool failure is reported to the user.
 
-Browser verification at desktop and 360 px widths was not completed. The computer-use browser runtime failed to initialize with `Invalid package config \\?\C:\\Users\\thiti\\package.json`; a separate headless Edge attempt did not produce a screenshot or usable console evidence. Therefore layout inspection, keyboard navigation in a real browser, and the end-to-end wallet/contract flow remain unverified in a browser. No browser-check pass is claimed.
+### Reward Wheel notes and remaining limitations
 
-### Phase 2 notes and remaining limitations
-
-- Contract reads and writes are wired to the ABI and addresses supplied via environment configuration, but no deployment or live RPC/wallet transaction was performed in this phase.
-- Countdown display derives from on-chain deadline and block time reads; no fabricated balance, reward, or gameplay values are used in the unconfigured state.
+- Contract reads and writes are wired to the ABI and addresses supplied via environment configuration; no unauthorized deployment or live mainnet transaction was performed.
+- The reward wheel is the sole game interaction on the play route.
+- The wheel spin starts only after the `play()` transaction receipt is confirmed on-chain.
+- While the VRF request is `REQUESTED`, the wheel continuously spins and displays `Waiting for verified on-chain result`.
+- `Stop & Reveal` is enabled only when the contract request status is `FULFILLED`. It is verified by unit test to be strictly presentation-only (invokes zero transactions/contract calls and cannot alter on-chain results).
+- The revealed segment strictly reflects `slotRequests(requestId).actualReward` (`0 PIGGY`, `10 PIGGY`, `20 PIGGY`, or `50 PIGGY`).
+- `Claim PIGGY reward` is displayed only for rewards greater than zero, executing the existing pull-payment claim flow.
+- All piggy-bank and coin animations, components, and tests have been completely removed.
 - Session activity is limited to transactions and request IDs observed in the current browser session; it is not a permanent indexed history.
-- The coin-to-piggy animation is gated on a confirmed Play receipt and the emitted request ID. Request reward display is derived from the contract request state and only shown when fulfilled; claim success is receipt-gated.
-- Before any Testnet deployment, configure actual addresses/RPC using an appropriately protected local environment file and independently verify the deployed contract ABI/configuration. No real secrets or live addresses are included in this repository.
 
 ## Phase 3A direct Chainlink VRF v2.5 remediation
 

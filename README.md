@@ -13,9 +13,9 @@ SquidPot is an academic prototype scoped to BNB Smart Chain Testnet. Phase 1 est
 - `contracts/test/` — unit, fuzz, and invariant coverage.
 - `contracts/script/` — BNB Smart Chain Testnet deployment and controlled smoke-test scripts. `PiggyToken` is deployed at `0x4c8d2990Ce2C99E3C5F4B765D0359FcAd210b84b`; SquidPot is deployed at `0x5F5db49C917257BD6bb21761EeEB97beF00A94c4`.
 - `contracts/DEPENDENCIES.md` — exact vendored OpenZeppelin, forge-std, and Chainlink revisions and refresh instructions.
-- `frontend/` — responsive Next.js interface, direct Wagmi/Viem contract access, transaction states, and frontend tests.
-- `docs/FRONTEND_SCOPE_CHANGE.md` — approved replacement of the earlier frontend visual direction.
-- `docs/FRONTEND_DESIGN_SYSTEM.md` and `docs/CONTRACT_EVENTS_AND_UI_STATES.md` — frontend styling and contract-to-UI integration behavior.
+- `frontend/` — responsive Next.js interface, single on-chain PIGGY reward wheel, direct Wagmi/Viem contract access, transaction states, and frontend tests.
+- `docs/FRONTEND_SCOPE_CHANGE.md` — approved replacement of the earlier frontend directions with the Single On-Chain PIGGY Reward Wheel.
+- `docs/FRONTEND_DESIGN_SYSTEM.md` and `docs/CONTRACT_EVENTS_AND_UI_STATES.md` — frontend styling, accessible SVG wheel, and contract-to-UI integration behavior.
 
 ## Local setup
 

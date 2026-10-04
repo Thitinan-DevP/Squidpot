@@ -42,7 +42,7 @@ All PIGGY integer values use 18 decimals. `currentPrizePool` and pending balance
 | User action | Contract call | Confirmation rule |
 |---|---|---|
 | Approve entry | PIGGY `approve(squidPot, ENTRY_FEE)` | Pending until receipt; approval is not a play. |
-| Play | `play()` | Wallet submission is not success. Wait for receipt, parse `SlotRequestCreated`, then read the emitted request ID via `getSlotRequest`. Trigger coin animation only after this receipt confirms. |
+| Play | `play()` | Wallet submission is not success. Wait for receipt, parse `SlotRequestCreated`, then read the emitted request ID via `getSlotRequest`. Start wheel spin animation only after this receipt confirms. |
 | Settle | `settleRound()` | Enable only when direct `roundStatus()` is EXPIRED. Any wallet may call; recorded `lastPlayer` is winner. Show success only after receipt. |
 | Slot reward claim | `claimSlotRewards()` | Pending until receipt, then refresh claim balance and show confirmed result. |
 | Previous-player claim | `claimPreviousRewards()` | Same receipt and refresh rules. |
@@ -73,10 +73,10 @@ Every state has readable text, is exposed through a polite status region where a
 | `READY_TO_APPROVE` | Exact entry allowance is insufficient; approval requests only `ENTRY_FEE`. |
 | `APPROVAL_PENDING` | Wallet approval submitted; waiting for receipt. |
 | `READY_TO_PLAY` | Connected/configured, initialized, unpaused, OPEN or WAITING, sufficient balance/allowance/capacity. |
-| `PLAY_WALLET_CONFIRMATION` | Awaiting wallet decision; no coin animation and no success implication. |
-| `PLAY_TRANSACTION_PENDING` | Broadcast play awaiting receipt; no animation or reward. |
-| `VRF_WAITING` | Confirmed play/request ID exists; direct request status is REQUESTED. |
-| `VRF_FULFILLED` | Direct request status is FULFILLED; now show the contract's exact reward (including zero). |
+| `PLAY_WALLET_CONFIRMATION` | Awaiting wallet decision; no wheel animation and no success implication. |
+| `PLAY_TRANSACTION_PENDING` | Broadcast play awaiting receipt; wheel remains static until receipt confirms. |
+| `VRF_WAITING` | Confirmed play/request ID exists; direct request status is REQUESTED; wheel spins continuously and displays `Waiting for verified on-chain result`. |
+| `VRF_FULFILLED` | Direct request status is FULFILLED; `Stop & Reveal` is enabled to reveal confirmed reward (0, 10, 20, 50 PIGGY); pull claim available if > 0. |
 | `VRF_EXPIRED` | Direct request status is EXPIRED; explain fee is not refunded and no reward exists. |
 | `ROUND_EXPIRED` | Direct round status is EXPIRED; play disabled, permissionless settlement available. |
 | `SETTLEMENT_PENDING` | Settlement submitted; wait for receipt before declaring completion. |

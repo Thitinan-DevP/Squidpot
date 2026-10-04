@@ -12,7 +12,7 @@ describe("claims and accessible responsive shell", () => {
     const onClaim = vi.fn();
     const user = userEvent.setup();
     render(<ClaimsPanel slot={BigInt(0)} previous={BigInt(125)} prize={BigInt(0)} busy={false} onClaim={onClaim} />);
-    const buttons = screen.getAllByRole("button", { name: "Claim" });
+    const buttons = screen.getAllByRole("button");
     expect(buttons[0]).toBeDisabled();
     expect(buttons[2]).toBeDisabled();
     await user.click(buttons[1]);
@@ -23,19 +23,29 @@ describe("claims and accessible responsive shell", () => {
     const user = userEvent.setup();
     render(<AppShell><h1>Keyboard test content</h1></AppShell>);
     await user.tab();
-    expect(screen.getByRole("link", { name: "SquidPot home" })).toHaveFocus();
+    expect(screen.getByRole("link", { name: "SquidPot หน้าหลัก" })).toHaveFocus();
     await user.tab();
-    expect(screen.getByRole("link", { name: "Play" })).toHaveFocus();
+    expect(screen.getByRole("link", { name: "เล่นเกม" })).toHaveFocus();
     const css = readFileSync(path.join(process.cwd(), "app", "globals.css"), "utf8");
     expect(css).toContain(":focus-visible");
     expect(css).toContain("outline: 3px solid");
   });
 
-  it("includes a 360px responsive breakpoint and minimum touch size", () => {
+  it("includes a 380px responsive breakpoint and minimum touch size", () => {
     const css = readFileSync(path.join(process.cwd(), "app", "globals.css"), "utf8");
-    expect(css).toContain("@media (max-width: 460px)");
-    expect(css).toContain("min-height: 46px");
+    expect(css).toContain("@media (max-width: 380px)");
+    expect(css).toContain("min-height: 48px");
     expect(css).toContain("width: min(100% - 24px");
+  });
+
+  it("opens wallet guidance in an accessible dialog without navigating away", async () => {
+    const user = userEvent.setup();
+    render(<AppShell><h1>หน้าเล่น</h1></AppShell>);
+    await user.click(screen.getByRole("button", { name: "วิธีใช้งาน" }));
+    expect(screen.getByRole("dialog", { name: "วิธีเล่นใน 5 ขั้นตอน" })).toBeInTheDocument();
+    expect(screen.getByText("เล่นตาม 5 ขั้นตอน")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "ปิดหน้าต่าง" }));
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
   it("recovers only observed request IDs from session activity for contract re-reads", () => {

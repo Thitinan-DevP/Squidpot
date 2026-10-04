@@ -30,7 +30,6 @@ import {
   type SessionActivity,
 } from "@/lib/format";
 import { deriveUiState, friendlyWalletError, transactionErrorState, type UiState } from "@/lib/ui-state";
-import { confirmedPlayAnimationKey } from "@/lib/confirmed-play";
 
 export type RequestView = {
   id: string;
@@ -85,7 +84,6 @@ export function useSquidPot() {
   const { writeContractAsync } = useWriteContract();
   const publicClient = usePublicClient({ chainId: frontendConfig?.chainId });
   const activity = useSyncExternalStore(subscribeSessionActivity, getSessionActivitySnapshot, getServerSessionActivitySnapshot);
-  const [confirmedPlayEvent, setConfirmedPlayEvent] = useState<string | undefined>();
   const [transactionState, setTransactionState] = useState<UiState | undefined>();
   const [transactionHash, setTransactionHash] = useState<Hash | undefined>();
   const [transactionError, setTransactionError] = useState<string | undefined>();
@@ -193,12 +191,11 @@ export function useSquidPot() {
     action: SessionActivity["action"],
     functionName: "approve" | "play" | "settleRound" | "claimSlotRewards" | "claimPreviousRewards" | "claimPrize",
     args: readonly unknown[] = [],
-  ) {
-    if (!frontendConfig || !address || !publicClient || (action === "approve" && entryFee === undefined)) return;
+  ): Promise<boolean> {
+    if (!frontendConfig || !address || !publicClient || (action === "approve" && entryFee === undefined)) return false;
     setTransactionError(undefined);
     setTransactionHash(undefined);
     setConfirmedAction(undefined);
-    if (action === "play") setConfirmedPlayEvent(undefined);
     const pendingState: UiState = action === "play" ? "PLAY_WALLET_CONFIRMATION"
       : action === "settle" ? "SETTLEMENT_PENDING" : action === "approve" ? "APPROVAL_PENDING" : "CLAIM_PENDING";
     setTransactionState(pendingState);
@@ -234,8 +231,6 @@ export function useSquidPot() {
         const created = events[0]?.args as { requestId?: bigint } | undefined;
         if (created?.requestId === undefined) throw new Error("Confirmed play receipt had no SlotRequestCreated event");
         requestId = created.requestId.toString();
-        const animationKey = confirmedPlayAnimationKey({ action, receiptStatus: receipt.status, transactionHash: receipt.transactionHash, requestId });
-        if (animationKey) setConfirmedPlayEvent(animationKey);
       }
 
       observedActivity = createSessionActivity({
@@ -249,6 +244,7 @@ export function useSquidPot() {
       setConfirmedAction(action);
       setTransactionState(undefined);
       await refetchAll();
+      return true;
     } catch (error) {
       const state = transactionErrorState(error);
       setTransactionState(state);
@@ -260,7 +256,32 @@ export function useSquidPot() {
         status: state === "TRANSACTION_REJECTED" ? "REJECTED" : "FAILED",
       });
       rememberActivity(observedActivity);
+      return false;
     }
+  }
+
+  const balanceSufficient = Boolean(
+    isConnected && tokenBalance !== undefined && entryFee !== undefined && tokenBalance >= entryFee
+  );
+  const capacityAvailable = Boolean(
+    availableSlotReserve !== undefined && maxReward !== undefined && activePendingRequests !== undefined && maxRequests !== undefined
+    && availableSlotReserve >= maxReward && activePendingRequests < maxRequests
+  );
+  const approvalNeeded = Boolean(
+    isConnected && allowance !== undefined && entryFee !== undefined && allowance < entryFee
+  );
+  const canSpin = Boolean(
+    frontendConfig && isConnected && correctNetwork && fundingInitialized && !paused && roundPhase !== "Expired"
+    && balanceSufficient && capacityAvailable && !transactionState
+  );
+
+  async function spinForTenPiggy(): Promise<boolean> {
+    if (!canSpin) return false;
+    if (approvalNeeded) {
+      const approved = await executeWrite("approve", "approve");
+      if (!approved) return false;
+    }
+    return await executeWrite("play", "play");
   }
 
   const connectWallet = async () => {
@@ -322,11 +343,14 @@ export function useSquidPot() {
     transactionHash,
     transactionError,
     confirmedAction,
-    confirmedPlayEvent,
     selectedRequestId,
     latestRequest,
     requests,
     activity,
+    balanceSufficient,
+    approvalNeeded,
+    canSpin,
+    spinForTenPiggy,
     isLoading: reads.isPending,
     readError: reads.error,
     executeWrite,

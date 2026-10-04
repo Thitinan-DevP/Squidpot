@@ -34,9 +34,9 @@ export default function HowItWorksPage() {
         <ol className="how-steps">
           <li><strong>เชื่อมต่อกระเป๋า</strong><span>กด “เชื่อมต่อกระเป๋า” แล้วเลือกกระเป๋าที่ติดตั้งไว้ เช่น MetaMask</span></li>
           <li><strong>เลือกเครือข่ายทดลอง</strong><span>เปลี่ยนเป็นเครือข่ายทดลอง BNB Smart Chain เมื่อกระเป๋าถาม หรือกดปุ่มเปลี่ยนเครือข่ายในหน้าเว็บ</span></li>
-          <li><strong>อนุมัติการใช้ PIGGY</strong><span>กดอนุมัติ 10 PIGGY แล้วกดยืนยันในกระเป๋า การอนุมัติเป็นคนละรายการกับการเล่น</span></li>
-          <li><strong>กดเล่น 10 PIGGY</strong><span>ยืนยันรายการในกระเป๋า แล้วรอเครือข่ายบันทึกรายการ</span></li>
-          <li><strong>รอผลสุ่มและรับรางวัล</strong><span>ระบบสุ่มผ่าน Chainlink VRF เมื่อผลยืนยันแล้วจึงแสดงรางวัลที่รับได้ในหน้า “กระเป๋า”</span></li>
+          <li><strong>อนุมัติการใช้ PIGGY</strong><span>หากยังไม่ได้อนุมัติ ระบบจะแนะนำให้อนุมัติ 10 PIGGY ก่อนเริ่มหมุนวงล้อ</span></li>
+          <li><strong>กดหมุน Spin for 10 PIGGY</strong><span>ยืนยันรายการในกระเป๋า แล้วรอเครือข่ายบันทึกรายการเล่น วงล้อจะเริ่มหมุนเมื่อรายการยืนยันแล้ว</span></li>
+          <li><strong>รอผลสุ่มและกด Stop & Reveal</strong><span>วงล้อจะหมุนระหว่างรอผลสุ่ม Chainlink VRF v2.5 เมื่อยืนยันแล้วกด &ldquo;Stop &amp; Reveal&rdquo; เพื่อดูผล และกดรับรางวัล PIGGY ได้ทันที</span></li>
         </ol>
         <p className="inline-warning">ต้องมี PIGGY สำหรับค่าเล่น และ tBNB บนเครือข่ายทดลองสำหรับค่าธรรมเนียม</p>
       </section>

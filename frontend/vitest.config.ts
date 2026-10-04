@@ -9,7 +9,7 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["./tests/setup.ts"],
     clearMocks: true,
-    pool: "threads",
+    pool: "forks",
     maxWorkers: 1,
   },
 });

@@ -37,7 +37,7 @@ Technology:
 - Next.js with TypeScript
 - Tailwind CSS
 - Wagmi and Viem
-- Framer Motion only for the confirmed Play coin-to-piggy-bank animation
+- Framer Motion for accessible motion support
 - Direct RPC reads for critical live state
 - Vercel-compatible frontend
 - Accessible semantic HTML
@@ -413,15 +413,27 @@ Use this clarification:
 
 “Starting from Round 2, each round begins with the accumulated rollover reserve and receives no additional Genesis Prize subsidy from the Academic Treasury. However, the Initial Slot Seed remains circulating as slot liquidity and must be separated from any evaluation of the protocol’s ability to sustain itself.”
 
-# 8. Approved Phase 2 frontend scope
+# 8. Approved Phase 2 frontend scope — Single On-Chain PIGGY Reward Wheel
 
-The approved frontend is a clean, calm, responsive Web3 interface. The Carnival Temple Fair theme is removed in full. Do not build or reference Ferris wheels, neon carnival backgrounds, flags, fireworks, audio, roller-coaster silhouettes, temple-fair imagery, gondolas, counter-rotation, or carnival booth styling.
+The approved frontend is a clean, calm, responsive Web3 interface centered exclusively around a single on-chain PIGGY reward wheel. The earlier Carnival Temple Fair theme and coin-to-piggy-bank animation are removed in full. Do not build, reference, or style piggy-bank visuals, coin-drop rails, ferris wheels, or carnival themes. Do not use gambling, investment, ROI, jackpot, dividend, or profit language.
 
-Use Next.js, TypeScript, Tailwind CSS, Wagmi, Viem, accessible semantic HTML, and Framer Motion only for the small confirmed Play coin-to-piggy-bank animation. Do not add Supabase, The Graph, a backend database, production mock data, hardcoded balances, hardcoded rewards, or fake countdown data.
+Use Next.js, TypeScript, Tailwind CSS, Wagmi, Viem, and accessible semantic HTML/SVG. Do not add Supabase, The Graph, a backend database, production mock data, hardcoded balances, hardcoded rewards, or fake countdown data.
 
-The sole visual interaction is a PIGGY coin that travels along a short visible rail and drops into a piggy bank only after the Play transaction receipt is confirmed on-chain, followed by a subtle squash-and-stretch effect. It must never suggest that Play, VRF, a prize, or a claim succeeded before confirmed chain state is available. Respect `prefers-reduced-motion`; in reduced-motion mode show a static success badge.
+The sole visual and gameplay interaction is the single on-chain PIGGY reward wheel:
+- A prominent `Spin for 10 PIGGY` button triggers entry (approving PIGGY if needed, then calling `play()`).
+- All pre-flight checks (wallet connection, BNB Smart Chain Testnet, configuration, balance >= 10 PIGGY, paused status, slot capacity) are strictly preserved.
+- The wheel begins spinning only after the `play()` transaction receipt is confirmed on-chain.
+- While the Chainlink VRF request is `REQUESTED`, the wheel continuously spins with status `Waiting for verified on-chain result`.
+- When the request is `FULFILLED`, the `Stop & Reveal` button is enabled.
+- `Stop & Reveal` is strictly presentation-only: it stops the rotation animation and reveals the already-recorded on-chain reward. It cannot send a transaction, alter random words, choose wheel positions, or affect any payout.
+- Four labeled wheel segments: `No Reward`, `10 PIGGY`, `20 PIGGY`, and `50 PIGGY`.
+- The final revealed segment strictly maps to the confirmed on-chain reward read from `slotRequests(requestId).actualReward`.
+- The reward is displayed exactly as `0 PIGGY`, `10 PIGGY`, `20 PIGGY`, or `50 PIGGY`.
+- If the reward is greater than zero, a `Claim PIGGY reward` button is displayed using the existing pull-payment claim flow.
+- Support `prefers-reduced-motion`: no continuous spinning; clear textual transaction and result states are displayed instead.
+- For expired, failed, rejected, unknown, duplicate, or late VRF states, accurate recovery/error messaging is shown without inventing a reward.
 
-Use a light or neutral background and one primary accent, high-contrast typography, spacious cards, a mobile-first layout, visible keyboard focus, and controls at least 44 × 44 CSS pixels. Prevent horizontal overflow at 360 px. No decorative motion beyond the confirmed coin drop.
+Use high-contrast typography, spacious cards, a mobile-first layout, visible keyboard focus (`:focus-visible`), and controls at least 44 × 44 CSS pixels. Prevent horizontal overflow at 360 px.
 
 ## Environment-only contract configuration
 
@@ -549,7 +561,7 @@ Follow this order:
 11. Run all contract checks.
 12. Record the approved frontend scope change and publish the frontend design and contract/UI-state documentation.
 13. Implement the Next.js routes, design system, accessible layout, wallet connection, direct contract reads, and receipt-confirmed writes.
-14. Implement session-scoped VRF request recovery and the confirmed Play coin-to-piggy-bank animation only.
+14. Implement session-scoped VRF request recovery and the single on-chain PIGGY reward wheel only.
 15. Add frontend unit/component and responsive/accessibility checks.
 16. Run lint, typecheck, tests, build, and browser verification where available.
 17. Search for secrets and private keys; update the README and test documentation.

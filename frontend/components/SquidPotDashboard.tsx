@@ -65,6 +65,9 @@ export function SquidPotDashboard({ walletPage = false }: { walletPage?: boolean
             )}
           </section>
 
+          {/* รางวัลของฉัน — แสดงก่อนเสมอ */}
+          <ClaimsPanel slot={pot.pendingSlotRewards} previous={pot.pendingPreviousRewards} prize={pot.pendingPrize} busy={isActive || !pot.correctNetwork} onClaim={claim} compact />
+
           <WalletConnection
             address={pot.address}
             chainId={pot.chainId}
@@ -109,7 +112,6 @@ export function SquidPotDashboard({ walletPage = false }: { walletPage?: boolean
             {pot.isConnected && !pot.correctNetwork && <p className="muted">เปลี่ยนเครือข่ายในกระเป๋าเป็น BNB Smart Chain Testnet ก่อนทำรายการ</p>}
           </section>
 
-          <ClaimsPanel slot={pot.pendingSlotRewards} previous={pot.pendingPreviousRewards} prize={pot.pendingPrize} busy={isActive || !pot.correctNetwork} onClaim={claim} />
           <SessionActivityList activity={pot.activity} requests={pot.requests} />
         </>
       ) : (

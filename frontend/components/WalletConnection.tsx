@@ -49,7 +49,7 @@ export function WalletConnection({ address, chainId, isConnected, correctNetwork
         )}
       </div>
       {!isConnected && <p className="muted">ใช้กระเป๋าอย่าง MetaMask และเลือกเครือข่ายทดลอง BNB Smart Chain</p>}
-      {isConnected && !correctNetwork && <p className="inline-warning" role="alert">ต้องเปลี่ยนเครือข่ายเป็นเครือข่ายทดลอง BNB Smart Chain (รหัสเครือข่าย {process.env.NEXT_PUBLIC_CHAIN_ID}) ก่อนทำรายการ</p>}
+      {isConnected && !correctNetwork && <p className="inline-warning" role="alert">ต้องเปลี่ยนเครือข่ายเป็นเครือข่ายทดลอง BNB Smart Chain (รหัสเครือข่าย {process.env.NEXT_PUBLIC_CHAIN_ID || "97"}) ก่อนทำรายการ</p>}
       {error && <p className="inline-error" role="alert">{error}</p>}
     </section>
   );

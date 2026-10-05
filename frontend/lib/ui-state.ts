@@ -68,6 +68,9 @@ export function friendlyWalletError(error: unknown): string {
   const message = error instanceof Error ? error.message.toLowerCase() : "";
   const code = typeof error === "object" && error !== null && "code" in error
     ? (error as { code?: number }).code : undefined;
+  if (/ไม่พบกระเป๋า|no connector|connector not found/i.test(message)) {
+    return "ไม่พบกระเป๋า Web3 (เช่น MetaMask) ในเบราว์เซอร์ กรุณาติดตั้งส่วนขยายกระเป๋าเงินก่อน";
+  }
   if (code === 4001 || /user rejected|denied transaction|request rejected|user denied/i.test(message)) {
     return "ยกเลิกคำขอในกระเป๋าแล้ว หากต้องการทำรายการให้กดปุ่มอีกครั้ง";
   }

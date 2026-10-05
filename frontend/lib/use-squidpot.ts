@@ -286,7 +286,10 @@ export function useSquidPot() {
 
   const connectWallet = async () => {
     const connector = connectors[0];
-    if (connector) await connectAsync({ connector });
+    if (!connector) {
+      throw new Error("ไม่พบกระเป๋า Web3 (เช่น MetaMask) ในเบราว์เซอร์ กรุณาติดตั้งส่วนขยายกระเป๋าเงินก่อน");
+    }
+    await connectAsync({ connector });
   };
 
   const switchToConfiguredChain = async () => {

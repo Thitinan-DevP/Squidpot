@@ -2,7 +2,7 @@ import { formatUnits, type Hex } from "viem";
 
 export function formatPiggy(value: bigint | undefined): string {
   if (value === undefined) return "—";
-  return `${formatUnits(value, 18)} PIGGY`;
+  return `${formatUnits(value, 18)} $PIGGY`;
 }
 
 export function shortAddress(address: string | undefined): string {

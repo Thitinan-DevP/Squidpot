@@ -75,10 +75,10 @@ function ConnectedHeaderBalancePill() {
       aria-current="page"
       aria-label="เล่นเกม"
       className="player-balance-pill"
-      title={pot.isConnected ? `ยอดเงินของคุณ: ${formatPiggy(pot.tokenBalance)} $PIGGY` : "ยังไม่ได้เชื่อมต่อกระเป๋า"}
+      title={pot.isConnected ? `ยอดเงินของคุณ: ${formatPiggy(pot.tokenBalance)}` : "ยังไม่ได้เชื่อมต่อกระเป๋า"}
     >
       <span className="balance-label">ยอดเงินของคุณ:</span>
-      <strong className="balance-value">{formatPiggy(pot.tokenBalance)} $PIGGY</strong>
+      <strong className="balance-value">{formatPiggy(pot.tokenBalance)}</strong>
     </Link>
   );
 }

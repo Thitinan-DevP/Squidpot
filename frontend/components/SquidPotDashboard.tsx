@@ -119,12 +119,12 @@ export function SquidPotDashboard({ walletPage = false }: { walletPage?: boolean
               pot.requests
                 .filter((r) => r.status === "FULFILLED")
                 .slice(0, 4)
-                .map((r) => `${formatPiggy(r.reward)} $PIGGY`)
+                .map((r) => formatPiggy(r.reward))
                 .length > 0
                 ? pot.requests
                     .filter((r) => r.status === "FULFILLED")
                     .slice(0, 4)
-                    .map((r) => `${formatPiggy(r.reward)} $PIGGY`)
+                    .map((r) => formatPiggy(r.reward))
                 : ["0 $PIGGY", "10 $PIGGY", "20 $PIGGY"]
             }
             isConnected={pot.isConnected}

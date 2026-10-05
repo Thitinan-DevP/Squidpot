@@ -5,7 +5,7 @@ import { MainNavigation } from "@/components/MainNavigation";
 
 export function AppShell({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen app-shell-root">
       <header className="site-header">
         <div className="shell header-inner">
           <Link className="brand" href="/" aria-label="SquidPot หน้าหลัก">

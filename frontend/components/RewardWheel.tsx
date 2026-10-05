@@ -437,9 +437,9 @@ export function RewardWheel({
                 type="button"
                 className="button stop-reveal-button pulse-gold"
                 onClick={handleStopAndReveal}
-                aria-label="Stop & Reveal"
+                aria-label="กดหยุดวงล้อ"
               >
-                กดเพื่อหยุดวงล้อ! (Stop &amp; Reveal)
+                กดหยุดวงล้อ
               </button>
             </div>
           )}
@@ -481,8 +481,8 @@ export function RewardWheel({
               <span className="pulse-red-glow" aria-hidden="true" />
               <span className="spinner-dot red-spinner" aria-hidden="true" />
               <div>
-                <strong>Waiting for verified on-chain result</strong>
-                <p>กำลังรอผลสุ่ม (Pending VRF Request) · กำลังรอเลขสุ่มจาก Chainlink VRF v2.5 บนบล็อกเชน...</p>
+                <strong>กำลังรอผลสุ่มจากบล็อกเชน</strong>
+                <p>กำลังรอเลขสุ่มจาก Chainlink VRF บนบล็อกเชน...</p>
               </div>
             </div>
           )}
@@ -496,8 +496,8 @@ export function RewardWheel({
           {isFulfilled && !isRevealed && (
             <div className="status-banner status-fulfilled-pending pulse-gold" role="status">
               <div>
-                <strong>ผลรางวัลพร้อมแล้ว! (VRF Fulfilled)</strong>
-                <p>กดปุ่ม &quot;กดเพื่อหยุดวงล้อ! (Stop &amp; Reveal)&quot; เพื่อหยุดวงล้อและเปิดผลรางวัล</p>
+                <strong>ผลรางวัลพร้อมแล้ว</strong>
+                <p>กดปุ่ม &quot;กดหยุดวงล้อ&quot; เพื่อเปิดผลรางวัล</p>
               </div>
             </div>
           )}
@@ -584,7 +584,7 @@ export function RewardWheel({
               onClick={handleStopAndReveal}
               aria-label="หยุดวงล้อและแสดงผลรางวัล"
             >
-              กดหยุดวงล้อ! (Stop &amp; Reveal)
+              กดหยุดวงล้อ
             </button>
           ) : (
             <button

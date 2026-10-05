@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useReducedMotion } from "framer-motion";
@@ -19,6 +19,10 @@ vi.mock("framer-motion", async (importOriginal) => {
 const PIGGY_DECIMALS = BigInt(10 ** 18);
 
 describe("RewardWheel unit and integration behavior", () => {
+  afterEach(() => {
+    vi.mocked(useReducedMotion).mockReturnValue(false);
+  });
+
   it("defines exactly the 4 required segments and maps confirmed rewards deterministically", () => {
     expect(WHEEL_SEGMENTS.map((s) => s.label)).toEqual([
       "No Reward",
@@ -97,9 +101,9 @@ describe("RewardWheel unit and integration behavior", () => {
     );
 
     expect(container.querySelector(".wheel-spinning")).not.toBeInTheDocument();
-    expect(screen.queryByText("Waiting for verified on-chain result")).not.toBeInTheDocument();
+    expect(screen.queryByText("กำลังรอผลสุ่มจากบล็อกเชน")).not.toBeInTheDocument();
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Stop & Reveal" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "กดหยุดวงล้อ" })).not.toBeInTheDocument();
 
     // Transaction pending state (before receipt confirmed)
     rerender(
@@ -115,7 +119,7 @@ describe("RewardWheel unit and integration behavior", () => {
 
     expect(container.querySelector(".wheel-spinning")).not.toBeInTheDocument();
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Stop & Reveal" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "กดหยุดวงล้อ" })).not.toBeInTheDocument();
   });
 
   it("spins continuously while VRF request is REQUESTED and shows clear waiting status", () => {
@@ -138,11 +142,11 @@ describe("RewardWheel unit and integration behavior", () => {
     );
 
     // Verified on-chain result status is shown
-    expect(screen.getByText("Waiting for verified on-chain result")).toBeInTheDocument();
+    expect(screen.getByText("กำลังรอผลสุ่มจากบล็อกเชน")).toBeInTheDocument();
     // Wheel has spinning CSS class
     expect(container.querySelector(".wheel-svg")).toHaveClass("wheel-spinning");
     // Stop & Reveal is not enabled
-    expect(screen.queryByRole("button", { name: "Stop & Reveal" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "กดหยุดวงล้อ" })).not.toBeInTheDocument();
     // No reward is invented or shown before fulfillment
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
@@ -170,7 +174,7 @@ describe("RewardWheel unit and integration behavior", () => {
     );
 
     // Stop & Reveal button is enabled
-    const stopRevealBtn = screen.getByRole("button", { name: "Stop & Reveal" });
+    const stopRevealBtn = screen.getByRole("button", { name: "กดหยุดวงล้อ" });
     expect(stopRevealBtn).toBeInTheDocument();
 
     // Before clicking Stop & Reveal, reward modal is not yet shown
@@ -214,7 +218,7 @@ describe("RewardWheel unit and integration behavior", () => {
       />
     );
 
-    const stopRevealBtn = screen.getByRole("button", { name: "Stop & Reveal" });
+    const stopRevealBtn = screen.getByRole("button", { name: "กดหยุดวงล้อ" });
     await user.click(stopRevealBtn);
 
     // Claim button is present but disabled because reward is zero
@@ -244,7 +248,7 @@ describe("RewardWheel unit and integration behavior", () => {
 
     // Wheel does NOT have spinning class when reduced motion is preferred
     expect(container.querySelector(".wheel-svg")).not.toHaveClass("wheel-spinning");
-    expect(screen.getByText("Waiting for verified on-chain result")).toBeInTheDocument();
+    expect(screen.getByText("กำลังรอผลสุ่มจากบล็อกเชน")).toBeInTheDocument();
     expect(screen.getByText(/โหมดลดภาพเคลื่อนไหว/)).toBeInTheDocument();
 
     vi.mocked(useReducedMotion).mockReturnValue(false);
@@ -330,7 +334,7 @@ describe("RewardWheel unit and integration behavior", () => {
     expect(screen.getByText(/ผลรางวัลพร้อมแล้ว/)).toBeInTheDocument();
 
     // Both the under-wheel Stop & Reveal button and the dashboard stop button are visible
-    const stopRevealBtn = screen.getByRole("button", { name: "Stop & Reveal" });
+    const stopRevealBtn = screen.getByRole("button", { name: "กดหยุดวงล้อ" });
     const dashboardStopBtn = screen.getByRole("button", { name: "หยุดวงล้อและแสดงผลรางวัล" });
     expect(stopRevealBtn).toBeInTheDocument();
     expect(dashboardStopBtn).toBeInTheDocument();
@@ -367,7 +371,7 @@ describe("RewardWheel unit and integration behavior", () => {
       />
     );
 
-    const stopRevealBtn = screen.getByRole("button", { name: "Stop & Reveal" });
+    const stopRevealBtn = screen.getByRole("button", { name: "กดหยุดวงล้อ" });
     await user.click(stopRevealBtn);
 
     // The Alert Dialog Modal is rendered

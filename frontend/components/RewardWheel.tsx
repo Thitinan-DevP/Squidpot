@@ -469,19 +469,35 @@ export function RewardWheel({
 
       {/* 3. Right Column: Container for both separate cards (ตารางผลรางวัล อยู่ด้านบนการ์ด รางวัลที่ยังไม่ได้ถอน) */}
       <div className="carnival-right-column">
-        {/* 3a. ตารางผลรางวัล — การ์ดแยกต่างหากด้านบน */}
+        {/* 3a. ตารางผลรางวัล — การ์ดแยกต่างหากด้านบน (ขนาดกะทัดรัด) */}
         <div className="card compact-reward-tiers-card" aria-label="ตารางผลรางวัล">
           <div className="compact-reward-tiers">
-            <div className="compact-table-title">ผลรางวัล</div>
-            <table className="compact-reward-table">
-              <tbody>
-                <tr><td><strong>x0</strong></td><td>0 $PIGGY</td></tr>
-                <tr><td><strong>x1</strong></td><td>10 $PIGGY</td></tr>
-                <tr><td><strong>x2</strong></td><td>20 $PIGGY</td></tr>
-                <tr><td><strong>x5</strong></td><td>50 $PIGGY</td></tr>
-                <tr className="jackpot-row"><td><strong>x10</strong></td><td>100 $PIGGY</td></tr>
-              </tbody>
-            </table>
+            <div className="compact-table-header">
+              <span className="compact-table-title">ตารางผลรางวัล</span>
+              <span className="compact-table-sub">10 PIGGY/รอบ</span>
+            </div>
+            <div className="compact-tiers-grid">
+              <div className="compact-tier-item">
+                <span className="tier-mult">x0</span>
+                <span className="tier-val">0</span>
+              </div>
+              <div className="compact-tier-item">
+                <span className="tier-mult">x1</span>
+                <span className="tier-val">10</span>
+              </div>
+              <div className="compact-tier-item">
+                <span className="tier-mult">x2</span>
+                <span className="tier-val">20</span>
+              </div>
+              <div className="compact-tier-item">
+                <span className="tier-mult">x5</span>
+                <span className="tier-val">50</span>
+              </div>
+              <div className="compact-tier-item jackpot">
+                <span className="tier-mult">x10</span>
+                <span className="tier-val">100</span>
+              </div>
+            </div>
           </div>
         </div>
 

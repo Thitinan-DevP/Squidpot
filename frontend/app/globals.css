@@ -988,82 +988,78 @@ td { font-variant-numeric: tabular-nums; }
 .compact-reward-tiers-card {
   width: 100%;
   max-width: 440px;
-  padding: 10px 18px;
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.38), rgba(254, 250, 240, 0.18));
+  padding: 8px 14px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.42), rgba(254, 250, 240, 0.22));
   border: 1px solid rgba(255, 255, 255, 0.55);
   border-radius: var(--radius-card);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22), inset 0 1px 1px rgba(255, 255, 255, 0.7);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18), inset 0 1px 1px rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(24px) saturate(170%);
   -webkit-backdrop-filter: blur(24px) saturate(170%);
 }
 .compact-reward-tiers {
   width: 100%;
-  max-width: 100%;
-  margin: 0;
-  padding: 0;
-  background: none;
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
-
+.compact-table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 3px;
+  border-bottom: 1px solid rgba(180, 83, 9, 0.15);
+}
 .compact-table-title {
-  font-size: 0.86rem;
+  font-size: 0.76rem;
   font-weight: 600;
   color: #78350f;
-  padding-bottom: 4px;
-  margin-bottom: 6px;
-  border-bottom: 1px solid rgba(180, 83, 9, 0.18);
   letter-spacing: 0.02em;
   text-shadow: none;
 }
-
-.compact-reward-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.78rem;
+.compact-table-sub {
+  font-size: 0.68rem;
+  color: #92400e;
+  opacity: 0.85;
 }
-
-.compact-reward-table th {
-  padding: 3px 8px;
-  font-size: 0.74rem;
-  font-weight: 500;
-  color: #78350f;
-  background: rgba(255, 255, 255, 0.30);
-  border-bottom: 1px solid rgba(180, 83, 9, 0.18);
+.compact-tiers-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 5px;
+}
+.compact-tier-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 2px;
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: 8px;
   text-align: center;
 }
-
-.compact-reward-table td {
-  padding: 3.5px 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
-  color: #451a03;
-  font-weight: 500;
-  text-shadow: none;
-  font-variant-numeric: tabular-nums;
-}
-
-.compact-reward-table td:first-child {
-  text-align: left;
-}
-
-.compact-reward-table td:last-child {
-  text-align: right;
-  font-weight: 600;
-}
-
-.compact-reward-table tr:last-child td {
-  border-bottom: none;
-}
-
-.compact-reward-table .jackpot-row td {
-  background: rgba(250, 204, 21, 0.35);
+.compact-tier-item .tier-mult {
+  font-size: 0.72rem;
   font-weight: 700;
+  color: #78350f;
+  line-height: 1.15;
+}
+.compact-tier-item .tier-val {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #451a03;
+  line-height: 1.2;
+}
+.compact-tier-item.jackpot {
+  background: linear-gradient(135deg, rgba(254, 240, 138, 0.75), rgba(250, 204, 21, 0.65));
+  border: 1px solid #eab308;
+  box-shadow: 0 0 10px rgba(234, 179, 8, 0.35);
+}
+.compact-tier-item.jackpot .tier-mult {
   color: #92400e;
-  text-shadow: none;
+}
+.compact-tier-item.jackpot .tier-val {
+  color: #78350f;
+  font-weight: 700;
 }
 .claim-zone {
   display: flex;

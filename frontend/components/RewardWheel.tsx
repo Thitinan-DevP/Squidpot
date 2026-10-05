@@ -467,123 +467,113 @@ export function RewardWheel({
         )}
       </section>
 
-      {/* 3. Right Column: แผงควบคุมเกม (Game Dashboard Card - Glassmorphism Card) */}
-      <section className="card game-dashboard-card" aria-label="แผงควบคุมเกม (Game Dashboard)">
-        {/* 3.0 ตารางเงินรางวัลขนาดกะทัดรัด (Compact Reward Tiers Table - ด้านบนการ์ด) */}
-        <div className="compact-reward-tiers">
-          <div className="compact-table-title">ผลรางวัล</div>
-          <table className="compact-reward-table">
-            <tbody>
-              <tr>
-                <td><strong>x0</strong></td>
-                <td>0 $PIGGY</td>
-              </tr>
-              <tr>
-                <td><strong>x1</strong></td>
-                <td>10 $PIGGY</td>
-              </tr>
-              <tr>
-                <td><strong>x2</strong></td>
-                <td>20 $PIGGY</td>
-              </tr>
-              <tr>
-                <td><strong>x5</strong></td>
-                <td>50 $PIGGY</td>
-              </tr>
-              <tr className="jackpot-row">
-                <td><strong>x10</strong></td>
-                <td>100 $PIGGY</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        {/* 3.1 โซนถอนเงินรางวัล (Claim Section) - การ์ดรางวัลที่ยังไม่ได้ถอน */}
-        <div className="claim-zone">
-          <div className="claim-header-row">
-            <div className="claim-balance-info">
-              <span className="claim-label">รางวัลที่ยังไม่ได้ถอน:</span>
-              <strong className="claim-amount">{displayPendingText}</strong>
-            </div>
-
-            {/* Pull-payment Claim Button: always visible, disabled if no reward to claim */}
-            <button
-              type="button"
-              className="button claim-neon-green-btn"
-              disabled={!hasClaimableReward || isActionBusy}
-              onClick={() => void onClaimReward()}
-              aria-label="Claim PIGGY reward"
-            >
-              ถอนรางวัล
-            </button>
+      {/* 3. Right Column: Container for both separate cards (ตารางผลรางวัล อยู่ด้านบนการ์ด รางวัลที่ยังไม่ได้ถอน) */}
+      <div className="carnival-right-column">
+        {/* 3a. ตารางผลรางวัล — การ์ดแยกต่างหากด้านบน */}
+        <div className="card compact-reward-tiers-card" aria-label="ตารางผลรางวัล">
+          <div className="compact-reward-tiers">
+            <div className="compact-table-title">ผลรางวัล</div>
+            <table className="compact-reward-table">
+              <tbody>
+                <tr><td><strong>x0</strong></td><td>0 $PIGGY</td></tr>
+                <tr><td><strong>x1</strong></td><td>10 $PIGGY</td></tr>
+                <tr><td><strong>x2</strong></td><td>20 $PIGGY</td></tr>
+                <tr><td><strong>x5</strong></td><td>50 $PIGGY</td></tr>
+                <tr className="jackpot-row"><td><strong>x10</strong></td><td>100 $PIGGY</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
-        {/* 3.2 ปุ่มแอ็กชันหลัก (Primary Action Button) */}
-        <div className="primary-action-zone">
-          {!isConnected && onConnect ? (
-            <button
-              type="button"
-              className="button neon-yellow-action-btn"
-              onClick={() => void onConnect()}
-              aria-label="เปิดกระเป๋าเงิน (Connect Wallet)"
-            >
-              เปิดกระเป๋าเงิน (Connect Wallet)
-            </button>
-          ) : !correctNetwork && onSwitchNetwork ? (
-            <button
-              type="button"
-              className="button neon-yellow-action-btn"
-              onClick={() => void onSwitchNetwork()}
-              aria-label="สลับเป็นเครือข่าย BNB Testnet"
-            >
-              สลับเป็นเครือข่าย BNB Testnet
-            </button>
-          ) : isFulfilled && !isRevealed ? (
-            <button
-              type="button"
-              className="button neon-yellow-action-btn pulse-gold stop-dashboard-btn"
-              onClick={handleStopAndReveal}
-              aria-label="กดหยุดวงล้อ"
-            >
-              กดหยุดวงล้อ
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="button neon-yellow-action-btn"
-              disabled={!canSpin || isActionBusy || isRequested}
-              onClick={() => void onSpin()}
-              aria-label="Spin for 10 PIGGY"
-            >
-              {isActionBusy && transactionState === "APPROVAL_PENDING"
-                ? "กำลังอนุมัติ 10 $PIGGY..."
-                : isActionBusy && (transactionState === "PLAY_WALLET_CONFIRMATION" || transactionState === "PLAY_TRANSACTION_PENDING")
-                  ? "กำลังส่งรายการเล่น..."
-                  : isRequested
-                    ? "กำลังรอผลสุ่ม..."
-                    : approvalNeeded
-                      ? "Approve 10 $PIGGY"
-                      : "หมุนชิงช้า (10 $PIGGY)"}
-            </button>
-          )}
+        {/* 3b. แผงควบคุมเกม (Game Dashboard Card - รางวัลที่ยังไม่ได้ถอน + ปุ่มหมุน) */}
+        <section className="card game-dashboard-card" aria-label="แผงควบคุมเกม (Game Dashboard)">
+          {/* 3.1 โซนถอนเงินรางวัล (Claim Section) - การ์ดรางวัลที่ยังไม่ได้ถอน */}
+          <div className="claim-zone">
+            <div className="claim-header-row">
+              <div className="claim-balance-info">
+                <span className="claim-label">รางวัลที่ยังไม่ได้ถอน:</span>
+                <strong className="claim-amount">{displayPendingText}</strong>
+              </div>
 
-          {/* Pre-flight hints */}
-          {!isConnected ? (
-            <p className="wheel-hint">เชื่อมต่อกระเป๋าเพื่อดูยอดเหรียญและเริ่มหมุนวงล้อ</p>
-          ) : !correctNetwork ? (
-            <p className="inline-warning" role="status">กรุณาสลับไปยังเครือข่ายทดลอง BNB Smart Chain</p>
-          ) : isFulfilled && !isRevealed ? null : isRequested ? null : approvalNeeded && canSpin ? (
-            <p className="wheel-hint">
-              คลิกปุ่ม &quot;Approve 10 $PIGGY&quot; เพื่ออนุมัติและเริ่มหมุนวงล้อเมื่อรายการยืนยัน
-            </p>
-          ) : !canSpin && tokenBalance !== undefined && entryFee !== undefined && tokenBalance < entryFee ? (
-            <p className="inline-warning" role="status">
-              ยอด PIGGY ของคุณไม่เพียงพอ (ต้องการอย่างน้อย 10 PIGGY เพื่อหมุนวงล้อ)
-            </p>
-          ) : null}
-        </div>
-      </section>
+              {/* Pull-payment Claim Button: always visible, disabled if no reward to claim */}
+              <button
+                type="button"
+                className="button claim-neon-green-btn"
+                disabled={!hasClaimableReward || isActionBusy}
+                onClick={() => void onClaimReward()}
+                aria-label="Claim PIGGY reward"
+              >
+                ถอนรางวัล
+              </button>
+            </div>
+          </div>
+
+          {/* 3.2 ปุ่มแอ็กชันหลัก (Primary Action Button) */}
+          <div className="primary-action-zone">
+            {!isConnected && onConnect ? (
+              <button
+                type="button"
+                className="button neon-yellow-action-btn"
+                onClick={() => void onConnect()}
+                aria-label="เปิดกระเป๋าเงิน (Connect Wallet)"
+              >
+                เปิดกระเป๋าเงิน (Connect Wallet)
+              </button>
+            ) : !correctNetwork && onSwitchNetwork ? (
+              <button
+                type="button"
+                className="button neon-yellow-action-btn"
+                onClick={() => void onSwitchNetwork()}
+                aria-label="สลับเป็นเครือข่าย BNB Testnet"
+              >
+                สลับเป็นเครือข่าย BNB Testnet
+              </button>
+            ) : isFulfilled && !isRevealed ? (
+              <button
+                type="button"
+                className="button neon-yellow-action-btn pulse-gold stop-dashboard-btn"
+                onClick={handleStopAndReveal}
+                aria-label="กดหยุดวงล้อ"
+              >
+                กดหยุดวงล้อ
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="button neon-yellow-action-btn"
+                disabled={!canSpin || isActionBusy || isRequested}
+                onClick={() => void onSpin()}
+                aria-label="Spin for 10 PIGGY"
+              >
+                {isActionBusy && transactionState === "APPROVAL_PENDING"
+                  ? "กำลังอนุมัติ 10 $PIGGY..."
+                  : isActionBusy && (transactionState === "PLAY_WALLET_CONFIRMATION" || transactionState === "PLAY_TRANSACTION_PENDING")
+                    ? "กำลังส่งรายการเล่น..."
+                    : isRequested
+                      ? "กำลังรอผลสุ่ม..."
+                      : approvalNeeded
+                        ? "Approve 10 $PIGGY"
+                        : "หมุนชิงช้า (10 $PIGGY)"}
+              </button>
+            )}
+
+            {/* Pre-flight hints */}
+            {!isConnected ? (
+              <p className="wheel-hint">เชื่อมต่อกระเป๋าเพื่อดูยอดเหรียญและเริ่มหมุนวงล้อ</p>
+            ) : !correctNetwork ? (
+              <p className="inline-warning" role="status">กรุณาสลับไปยังเครือข่ายทดลอง BNB Smart Chain</p>
+            ) : isFulfilled && !isRevealed ? null : isRequested ? null : approvalNeeded && canSpin ? (
+              <p className="wheel-hint">
+                คลิกปุ่ม &quot;Approve 10 $PIGGY&quot; เพื่ออนุมัติและเริ่มหมุนวงล้อเมื่อรายการยืนยัน
+              </p>
+            ) : !canSpin && tokenBalance !== undefined && entryFee !== undefined && tokenBalance < entryFee ? (
+              <p className="inline-warning" role="status">
+                ยอด PIGGY ของคุณไม่เพียงพอ (ต้องการอย่างน้อย 10 PIGGY เพื่อหมุนวงล้อ)
+              </p>
+            ) : null}
+          </div>
+        </section>
+      </div>
 
       {/* 4. Alert / Result Dialog Modal */}
       {showResultModal && isFulfilled && isRevealed && (

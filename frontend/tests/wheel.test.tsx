@@ -7,6 +7,7 @@ import {
   WHEEL_SEGMENTS,
   formatExactReward,
   rewardToSegmentIndex,
+  getRewardMultiplierText,
 } from "@/components/RewardWheel";
 import type { RequestView } from "@/lib/use-squidpot";
 
@@ -307,5 +308,103 @@ describe("RewardWheel unit and integration behavior", () => {
     expect(screen.getByRole("alert")).toHaveTextContent("ทำรายการไม่สำเร็จ");
     expect(screen.getByRole("alert")).toHaveTextContent("Custom testnet error");
     expect(screen.queryByRole("region", { name: "ผลรางวัลที่ยืนยันแล้ว" })).not.toBeInTheDocument();
+  });
+
+  it("keeps the wheel spinning when FULFILLED until the player explicitly clicks Stop & Reveal", async () => {
+    const onSpin = vi.fn();
+    const onClaimReward = vi.fn();
+    const user = userEvent.setup();
+
+    const request: RequestView = {
+      id: "201",
+      status: "FULFILLED",
+      reward: BigInt(50) * PIGGY_DECIMALS,
+    };
+
+    const { container } = render(
+      <RewardWheel
+        canSpin={true}
+        approvalNeeded={false}
+        isActionBusy={false}
+        latestRequest={request}
+        onSpin={onSpin}
+        onClaimReward={onClaimReward}
+      />
+    );
+
+    // CRITICAL FIX PROOF: The wheel MUST still be spinning even after contract fulfillment,
+    // so the user has the power to press Stop & Reveal instead of it halting abruptly on its own!
+    expect(container.querySelector(".wheel-svg")).toHaveClass("wheel-spinning");
+    expect(screen.getByText(/ผลรางวัลพร้อมแล้ว/)).toBeInTheDocument();
+
+    // Both the under-wheel Stop & Reveal button and the dashboard stop button are visible
+    const stopRevealBtn = screen.getByRole("button", { name: "Stop & Reveal" });
+    const dashboardStopBtn = screen.getByRole("button", { name: "หยุดวงล้อและแสดงผลรางวัล" });
+    expect(stopRevealBtn).toBeInTheDocument();
+    expect(dashboardStopBtn).toBeInTheDocument();
+
+    // User clicks Stop & Reveal
+    await user.click(stopRevealBtn);
+
+    // After stopping, spinning class is removed
+    expect(container.querySelector(".wheel-svg")).not.toHaveClass("wheel-spinning");
+    expect(screen.getByRole("region", { name: "ผลรางวัลที่ยืนยันแล้ว" })).toHaveTextContent("50 PIGGY");
+  });
+
+  it("opens a celebration Alert dialog modal when the wheel reveals the result and allows closing", async () => {
+    // In reduced motion mode, modal appears immediately without timer delay
+    vi.mocked(useReducedMotion).mockReturnValue(true);
+
+    const onSpin = vi.fn();
+    const onClaimReward = vi.fn();
+    const user = userEvent.setup();
+
+    const request: RequestView = {
+      id: "202",
+      status: "FULFILLED",
+      reward: BigInt(20) * PIGGY_DECIMALS,
+    };
+
+    render(
+      <RewardWheel
+        canSpin={true}
+        approvalNeeded={false}
+        isActionBusy={false}
+        latestRequest={request}
+        onSpin={onSpin}
+        onClaimReward={onClaimReward}
+      />
+    );
+
+    const stopRevealBtn = screen.getByRole("button", { name: "Stop & Reveal" });
+    await user.click(stopRevealBtn);
+
+    // The Alert Dialog Modal is rendered
+    const modalDialog = screen.getByRole("dialog");
+    expect(modalDialog).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "ยินดีด้วย! คุณได้รับรางวัล" })).toBeInTheDocument();
+    expect(modalDialog).toHaveTextContent("20 PIGGY");
+    expect(modalDialog).toHaveTextContent("ตัวคูณ x2");
+
+    // Close button dismisses the modal
+    const closeBtn = screen.getByRole("button", { name: "ปิดหน้าต่างผลรางวัล" });
+    await user.click(closeBtn);
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+
+    // Player can reopen the modal using the button in the status panel
+    const reopenBtn = screen.getByRole("button", { name: "📢 เปิดหน้าต่างแจ้งผลรางวัล" });
+    await user.click(reopenBtn);
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+
+    vi.mocked(useReducedMotion).mockReturnValue(false);
+  });
+
+  it("maps multiplier text accurately for all tiers", () => {
+    expect(getRewardMultiplierText(BigInt(0))).toBe("x0");
+    expect(getRewardMultiplierText(undefined)).toBe("x0");
+    expect(getRewardMultiplierText(BigInt(10) * PIGGY_DECIMALS)).toBe("x1");
+    expect(getRewardMultiplierText(BigInt(20) * PIGGY_DECIMALS)).toBe("x2");
+    expect(getRewardMultiplierText(BigInt(50) * PIGGY_DECIMALS)).toBe("x5");
+    expect(getRewardMultiplierText(BigInt(100) * PIGGY_DECIMALS)).toBe("x10 Jackpot");
   });
 });

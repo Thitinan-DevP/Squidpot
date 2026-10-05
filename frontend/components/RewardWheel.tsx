@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useReducedMotion } from "framer-motion";
 import type { RequestView } from "@/lib/use-squidpot";
 import type { UiState } from "@/lib/ui-state";
@@ -93,6 +93,15 @@ export function rewardToTargetRotation(reward?: bigint): number {
   return 0;
 }
 
+export function getRewardMultiplierText(reward?: bigint): string {
+  if (reward === undefined || reward === BigInt(0)) return "x0";
+  if (reward === BigInt(10) * BigInt(10 ** 18)) return "x1";
+  if (reward === BigInt(20) * BigInt(10 ** 18)) return "x2";
+  if (reward === BigInt(50) * BigInt(10 ** 18)) return "x5";
+  if (reward === BigInt(100) * BigInt(10 ** 18)) return "x10 Jackpot";
+  return "x0";
+}
+
 import { formatUnits } from "viem";
 
 function SparkleCelebrationIcon() {
@@ -146,6 +155,8 @@ export function RewardWheel({
 }: Props) {
   const prefersReducedMotion = useReducedMotion() ?? false;
   const [revealedRequestId, setRevealedRequestId] = useState<string | null>(null);
+  const [showResultModal, setShowResultModal] = useState(false);
+  const [dismissedModalRequestId, setDismissedModalRequestId] = useState<string | null>(null);
 
   const requestStatus = latestRequest?.status;
   const isRequested = requestStatus === "REQUESTED";
@@ -156,11 +167,19 @@ export function RewardWheel({
   // isRevealed is strictly scoped to the current requestId
   const isRevealed = Boolean(latestRequest?.id && revealedRequestId === latestRequest.id);
 
-  // The wheel spins continuously ONLY while the request is in REQUESTED state
-  const isSpinning = isRequested && !isRevealed && !prefersReducedMotion;
+  // The wheel spins continuously while VRF request is REQUESTED
+  // AND continues spinning when FULFILLED until the player clicks Stop & Reveal!
+  const isSpinning = (isRequested || (isFulfilled && !isRevealed)) && !prefersReducedMotion;
 
-  // Target rotation is determined strictly by the confirmed on-chain reward
-  const targetRotation = isRevealed ? rewardToTargetRotation(latestRequest?.reward) : 0;
+  // Target rotation is determined strictly by the confirmed on-chain reward.
+  // In full-motion mode, adding 1440deg (4 full rotations) gives realistic deceleration momentum before settling.
+  const baseTargetRotation = rewardToTargetRotation(latestRequest?.reward);
+  const targetRotation = isRevealed
+    ? prefersReducedMotion
+      ? baseTargetRotation
+      : 1440 + baseTargetRotation
+    : 0;
+
   const exactRewardText = isFulfilled ? formatExactReward(latestRequest?.reward) : undefined;
   const hasClaimableReward = isFulfilled && isRevealed && latestRequest?.reward !== undefined && latestRequest.reward > BigInt(0);
 
@@ -177,6 +196,44 @@ export function RewardWheel({
     setRevealedRequestId(latestRequest.id);
   };
 
+  // Automatically trigger the Result Modal when the wheel stops on the winning slice
+  useEffect(() => {
+    if (isFulfilled && isRevealed && latestRequest?.id && dismissedModalRequestId !== latestRequest.id) {
+      if (prefersReducedMotion) {
+        setShowResultModal(true);
+      } else {
+        const timer = setTimeout(() => {
+          setShowResultModal(true);
+        }, 1800);
+        return () => clearTimeout(timer);
+      }
+    } else if (!isFulfilled || !isRevealed) {
+      setShowResultModal(false);
+    }
+  }, [isFulfilled, isRevealed, latestRequest?.id, dismissedModalRequestId, prefersReducedMotion]);
+
+  // Safety timer: auto-reveal after 15s if the user hasn't clicked stop
+  useEffect(() => {
+    if (isFulfilled && !isRevealed && latestRequest?.id) {
+      const timer = setTimeout(() => {
+        setRevealedRequestId(latestRequest.id);
+      }, 15000);
+      return () => clearTimeout(timer);
+    }
+  }, [isFulfilled, isRevealed, latestRequest?.id]);
+
+  // Close modal on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && showResultModal) {
+        setDismissedModalRequestId(latestRequest?.id ?? null);
+        setShowResultModal(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [showResultModal, latestRequest?.id]);
+
   return (
     <div className="carnival-desktop-grid">
       {/* 2. Left Column: Lucky Carnival Wheel Stage (Card removed, floating wheel with white text) */}
@@ -190,11 +247,17 @@ export function RewardWheel({
             </svg>
           </div>
 
-          {/* SVG Wheel with 16 alternating carnival red/white slices & marquee bulbs */}
+          {/* SVG Wheel with 24 alternating carnival red/white slices & marquee bulbs */}
           <div className="wheel-disc-wrap">
             <svg
               className={`wheel-svg ${isSpinning ? "wheel-spinning" : ""}`}
-              style={!isSpinning && !prefersReducedMotion && isRevealed ? { transform: `rotate(${targetRotation}deg)`, transition: "transform 1.4s cubic-bezier(0.18, 0.89, 0.32, 1.15)" } : !isSpinning && targetRotation !== 0 ? { transform: `rotate(${targetRotation}deg)` } : undefined}
+              style={
+                !isSpinning && !prefersReducedMotion && isRevealed
+                  ? { transform: `rotate(${targetRotation}deg)`, transition: "transform 1.8s cubic-bezier(0.15, 0.9, 0.25, 1)" }
+                  : !isSpinning && targetRotation !== 0
+                  ? { transform: `rotate(${targetRotation}deg)` }
+                  : undefined
+              }
               viewBox="0 0 300 300"
               role="img"
               aria-label="วงล้อรางวัล 4 ช่อง: No Reward, 10 PIGGY, 20 PIGGY, 50 PIGGY"
@@ -320,11 +383,12 @@ export function RewardWheel({
           {isFulfilled && !isRevealed && (
             <div className="wheel-reveal-action">
               <button
-                className="button button-secondary stop-reveal-button"
+                type="button"
+                className="button stop-reveal-button pulse-gold"
                 onClick={handleStopAndReveal}
                 aria-label="Stop & Reveal"
               >
-                Stop &amp; Reveal
+                🛑 กดเพื่อหยุดวงล้อ! (Stop &amp; Reveal)
               </button>
             </div>
           )}
@@ -379,10 +443,10 @@ export function RewardWheel({
           )}
 
           {isFulfilled && !isRevealed && (
-            <div className="status-banner status-fulfilled-pending" role="status">
+            <div className="status-banner status-fulfilled-pending pulse-gold" role="status">
               <div>
-                <strong>บันทึกผลสุ่มบนเครือข่ายเรียบร้อยแล้ว</strong>
-                <p>กดปุ่ม &quot;Stop &amp; Reveal&quot; ด้านบนเพื่อหยุดการหมุนและดูผลรางวัลที่บันทึกไว้</p>
+                <strong>🎉 ผลรางวัลพร้อมแล้ว! (VRF Fulfilled)</strong>
+                <p>กดปุ่ม &quot;กดเพื่อหยุดวงล้อ! (Stop &amp; Reveal)&quot; เพื่อหยุดวงล้อและเปิดผลรางวัล</p>
               </div>
             </div>
           )}
@@ -393,10 +457,21 @@ export function RewardWheel({
                 <SparkleCelebrationIcon />
               </span>
               <div>
-                <strong>ยินดีด้วย! คุณได้รับ {exactRewardText}</strong>
+                <strong>
+                  {latestRequest?.reward && latestRequest.reward > BigInt(0)
+                    ? `ยินดีด้วย! คุณได้รับ ${exactRewardText}`
+                    : `ครั้งนี้ยังไม่ถูกรางวัล (0 $PIGGY)`}
+                </strong>
                 <p className="muted">
-                  ผลสุ่มนี้อ่านจากสัญญาบนเครือข่ายโดยตรง (รางวัลที่ได้รับ: {exactRewardText} · requestId: {latestRequest?.id})
+                  ผลสุ่มนี้อ่านจากสัญญาบนเครือข่ายโดยตรง (รางวัล: {exactRewardText} · ตัวคูณ: {getRewardMultiplierText(latestRequest?.reward)} · requestId: {latestRequest?.id})
                 </p>
+                <button
+                  type="button"
+                  className="view-result-dialog-btn"
+                  onClick={() => setShowResultModal(true)}
+                >
+                  📢 เปิดหน้าต่างแจ้งผลรางวัล
+                </button>
               </div>
             </div>
           )}
@@ -486,6 +561,15 @@ export function RewardWheel({
                 ? "กำลังปิดรอบ..."
                 : "หมดเวลาแล้ว — ปิดรอบเพื่อเริ่มรอบใหม่"}
             </button>
+          ) : isFulfilled && !isRevealed ? (
+            <button
+              type="button"
+              className="button neon-yellow-action-btn pulse-gold stop-dashboard-btn"
+              onClick={handleStopAndReveal}
+              aria-label="หยุดวงล้อและแสดงผลรางวัล"
+            >
+              🛑 กดหยุดวงล้อ! (Stop &amp; Reveal)
+            </button>
           ) : (
             <button
               type="button"
@@ -526,6 +610,110 @@ export function RewardWheel({
           ) : null}
         </div>
       </section>
+
+      {/* 4. Alert / Result Dialog Modal */}
+      {showResultModal && isFulfilled && isRevealed && (
+        <div
+          className="wheel-modal-backdrop"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="result-modal-title"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setDismissedModalRequestId(latestRequest?.id ?? null);
+              setShowResultModal(false);
+            }
+          }}
+        >
+          <div className="wheel-modal-card">
+            {/* Close Button */}
+            <button
+              type="button"
+              className="modal-close-icon-btn"
+              onClick={() => {
+                setDismissedModalRequestId(latestRequest?.id ?? null);
+                setShowResultModal(false);
+              }}
+              aria-label="ปิดหน้าต่างผลรางวัล"
+            >
+              ✕
+            </button>
+
+            {hasClaimableReward ? (
+              <>
+                <div className="modal-badge-glow" aria-hidden="true">
+                  🎉
+                </div>
+                <h2 id="result-modal-title" className="modal-title">
+                  ยินดีด้วย! คุณได้รับรางวัล
+                </h2>
+                <div className="modal-reward-box">
+                  <span className="modal-multiplier-pill">
+                    ตัวคูณ {getRewardMultiplierText(latestRequest?.reward)}
+                  </span>
+                  <span className="modal-reward-amount">{exactRewardText}</span>
+                </div>
+                <p className="modal-desc">
+                  ผลสุ่มได้รับการตรวจสอบความโปร่งใสบนบล็อกเชนด้วย Chainlink VRF เรียบร้อยแล้ว
+                  รางวัลถูกบันทึกในสัญญา สามารถกดถอนเหรียญเข้ากระเป๋าได้ทันที!
+                </p>
+                <div className="modal-actions-row">
+                  <button
+                    type="button"
+                    className="button claim-neon-green-btn modal-claim-btn"
+                    disabled={isActionBusy}
+                    onClick={async () => {
+                      await onClaimReward();
+                    }}
+                    aria-label="ถอนเงินรางวัลทันที"
+                  >
+                    💰 ถอนเงินรางวัลทันที ({exactRewardText})
+                  </button>
+                  <button
+                    type="button"
+                    className="button button-secondary modal-play-again-btn"
+                    onClick={() => {
+                      setDismissedModalRequestId(latestRequest?.id ?? null);
+                      setShowResultModal(false);
+                    }}
+                  >
+                    🎮 ปิดหน้าต่าง / เล่นรอบต่อไป
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="modal-badge-glow neutral" aria-hidden="true">
+                  🍀
+                </div>
+                <h2 id="result-modal-title" className="modal-title lose-title">
+                  ครั้งนี้ยังไม่ถูกรางวัล
+                </h2>
+                <div className="modal-reward-box neutral">
+                  <span className="modal-multiplier-pill neutral">ตัวคูณ x0</span>
+                  <span className="modal-reward-amount">0 $PIGGY</span>
+                </div>
+                <p className="modal-desc neutral">
+                  ไม่เป็นไรนะ! การสุ่มผ่าน Chainlink VRF มีความโปร่งใส 100%
+                  รอบต่อไปยังมีโอกาสลุ้นรางวัลใหญ่ Jackpot x10 (100 $PIGGY)!
+                </p>
+                <div className="modal-actions-row">
+                  <button
+                    type="button"
+                    className="button neon-yellow-action-btn modal-try-again-btn"
+                    onClick={() => {
+                      setDismissedModalRequestId(latestRequest?.id ?? null);
+                      setShowResultModal(false);
+                    }}
+                  >
+                    🔄 ลองหมุนอีกครั้ง
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

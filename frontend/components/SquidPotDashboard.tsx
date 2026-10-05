@@ -89,27 +89,7 @@ export function SquidPotDashboard({ walletPage = false }: { walletPage?: boolean
             />
           )}
 
-          <section className="card" aria-labelledby="wallet-values-heading">
-            <p className="eyebrow">ข้อมูลจากกระเป๋า</p>
-            <h2 id="wallet-values-heading">ยอด PIGGY ของฉัน</h2>
-            <dl className="metric-grid two-column">
-              <div><dt>ที่อยู่กระเป๋า</dt><dd title={pot.address}>{pot.address ?? "ยังไม่ได้เชื่อมต่อ"}</dd></div>
-              <div><dt>ยอดคงเหลือ</dt><dd>{pot.isConnected && pot.tokenBalance === undefined ? "กำลังอ่านยอด…" : formatPiggy(pot.tokenBalance)}</dd></div>
-              <div><dt>เครือข่าย</dt><dd>{pot.correctNetwork ? "เครือข่ายทดลอง BNB Smart Chain" : "ยังไม่ได้เชื่อมต่อเครือข่ายทดลอง"}</dd></div>
-            </dl>
-            {pot.approvalNeeded && (
-              <div className="wallet-approval-zone">
-                <button
-                  className="button button-primary wallet-approve-btn"
-                  disabled={!pot.correctNetwork || isActive}
-                  onClick={() => void pot.executeWrite("approve", "approve")}
-                >
-                  อนุมัติใช้ PIGGY
-                </button>
-              </div>
-            )}
-            {pot.isConnected && !pot.correctNetwork && <p className="muted">เปลี่ยนเครือข่ายในกระเป๋าเป็น BNB Smart Chain Testnet ก่อนทำรายการ</p>}
-          </section>
+
 
           <SessionActivityList activity={pot.activity} requests={pot.requests} />
         </>

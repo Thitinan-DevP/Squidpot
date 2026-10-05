@@ -101,7 +101,7 @@ describe("RewardWheel unit and integration behavior", () => {
     );
 
     expect(container.querySelector(".wheel-spinning")).not.toBeInTheDocument();
-    expect(screen.queryByText("กำลังรอผลสุ่มจากบล็อกเชน")).not.toBeInTheDocument();
+    expect(screen.queryByText("กำลังรอผลสุ่ม...")).not.toBeInTheDocument();
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "กดหยุดวงล้อ" })).not.toBeInTheDocument();
 
@@ -141,11 +141,11 @@ describe("RewardWheel unit and integration behavior", () => {
       />
     );
 
-    // Verified on-chain result status is shown
-    expect(screen.getByText("กำลังรอผลสุ่มจากบล็อกเชน")).toBeInTheDocument();
+    // Primary action button shows waiting status
+    expect(screen.getByText("กำลังรอผลสุ่ม...")).toBeInTheDocument();
     // Wheel has spinning CSS class
     expect(container.querySelector(".wheel-svg")).toHaveClass("wheel-spinning");
-    // Stop & Reveal is not enabled
+    // Stop button is not enabled
     expect(screen.queryByRole("button", { name: "กดหยุดวงล้อ" })).not.toBeInTheDocument();
     // No reward is invented or shown before fulfillment
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
@@ -248,8 +248,7 @@ describe("RewardWheel unit and integration behavior", () => {
 
     // Wheel does NOT have spinning class when reduced motion is preferred
     expect(container.querySelector(".wheel-svg")).not.toHaveClass("wheel-spinning");
-    expect(screen.getByText("กำลังรอผลสุ่มจากบล็อกเชน")).toBeInTheDocument();
-    expect(screen.getByText(/โหมดลดภาพเคลื่อนไหว/)).toBeInTheDocument();
+    expect(screen.getByText("กำลังรอผลสุ่ม...")).toBeInTheDocument();
 
     vi.mocked(useReducedMotion).mockReturnValue(false);
   });
@@ -328,19 +327,15 @@ describe("RewardWheel unit and integration behavior", () => {
       />
     );
 
-    // CRITICAL FIX PROOF: The wheel MUST still be spinning even after contract fulfillment,
-    // so the user has the power to press Stop & Reveal instead of it halting abruptly on its own!
+    // The wheel MUST still be spinning even after contract fulfillment
     expect(container.querySelector(".wheel-svg")).toHaveClass("wheel-spinning");
-    expect(screen.getByText(/ผลรางวัลพร้อมแล้ว/)).toBeInTheDocument();
 
-    // Both the under-wheel Stop & Reveal button and the dashboard stop button are visible
-    const stopRevealBtn = screen.getByRole("button", { name: "กดหยุดวงล้อ" });
-    const dashboardStopBtn = screen.getByRole("button", { name: "หยุดวงล้อและแสดงผลรางวัล" });
-    expect(stopRevealBtn).toBeInTheDocument();
-    expect(dashboardStopBtn).toBeInTheDocument();
+    // The single stop button in the dashboard is visible
+    const stopBtn = screen.getByRole("button", { name: "กดหยุดวงล้อ" });
+    expect(stopBtn).toBeInTheDocument();
 
-    // User clicks Stop & Reveal
-    await user.click(stopRevealBtn);
+    // User clicks stop
+    await user.click(stopBtn);
 
     // After stopping, spinning class is removed
     expect(container.querySelector(".wheel-svg")).not.toHaveClass("wheel-spinning");

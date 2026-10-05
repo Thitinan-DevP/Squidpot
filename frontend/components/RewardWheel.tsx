@@ -429,20 +429,6 @@ export function RewardWheel({
               <circle cx="150" cy="150" r="27" fill="none" stroke="#f5b300" strokeWidth="2.2" />
             </svg>
           </div>
-
-          {/* Presentation-only Stop & Reveal Button */}
-          {isFulfilled && !isRevealed && (
-            <div className="wheel-reveal-action">
-              <button
-                type="button"
-                className="button stop-reveal-button pulse-gold"
-                onClick={handleStopAndReveal}
-                aria-label="กดหยุดวงล้อ"
-              >
-                กดหยุดวงล้อ
-              </button>
-            </div>
-          )}
         </div>
 
         {/* 2.1 ตารางเงินรางวัลขนาดกะทัดรัด (Compact Reward Tiers Table ใต้วงล้อ) */}
@@ -474,64 +460,38 @@ export function RewardWheel({
           </table>
         </div>
 
-        {/* 2.2 ป้ายสถานะธุรกรรม (Status Badge - ด้านล่างชิงช้า) */}
-        <div className="wheel-status-panel" aria-live="polite">
-          {isRequested && (
-            <div className="neon-badge neon-red-pulse" role="status">
-              <span className="pulse-red-glow" aria-hidden="true" />
-              <span className="spinner-dot red-spinner" aria-hidden="true" />
-              <div>
-                <strong>กำลังรอผลสุ่มจากบล็อกเชน</strong>
-                <p>กำลังรอเลขสุ่มจาก Chainlink VRF บนบล็อกเชน...</p>
+        {/* Error / Alert Status Panel (เฉพาะกรณีเกิดข้อผิดพลาด) */}
+        {(isExpired || isUnknownOrInvalid || transactionState === "TRANSACTION_REJECTED" || transactionState === "TRANSACTION_FAILED") && (
+          <div className="wheel-status-panel" aria-live="polite">
+            {isExpired && (
+              <div className="status-banner status-expired" role="alert">
+                <strong>คำขอสุ่มหมดเวลา (VRF Request Expired)</strong>
+                <p>คำขอหมายเลข {latestRequest?.id} เกินกำหนด 200 บล็อก สัญญาไม่อนุมัติผลสุ่ม ระบบไม่ได้คืนค่าเล่น 10 PIGGY และไม่มีรางวัลจากคำขอนี้</p>
               </div>
-            </div>
-          )}
+            )}
 
-          {prefersReducedMotion && isRequested && (
-            <p className="reduced-motion-note">
-              [โหมดลดภาพเคลื่อนไหว]: วงล้อหยุดนิ่งตามการตั้งค่าของคุณ กำลังรอผลลัพธ์จากสัญญา
-            </p>
-          )}
-
-          {isFulfilled && !isRevealed && (
-            <div className="status-banner status-fulfilled-pending pulse-gold" role="status">
-              <div>
-                <strong>ผลรางวัลพร้อมแล้ว</strong>
-                <p>กดปุ่ม &quot;กดหยุดวงล้อ&quot; เพื่อเปิดผลรางวัล</p>
+            {isUnknownOrInvalid && (
+              <div className="status-banner status-expired" role="alert">
+                <strong>สถานะคำขอไม่ถูกต้องหรือหมดอายุแล้ว</strong>
+                <p>ไม่พบผลสุ่มที่ถูกต้องสำหรับคำขอนี้บนเครือข่าย</p>
               </div>
-            </div>
-          )}
+            )}
 
+            {transactionState === "TRANSACTION_REJECTED" && (
+              <div className="status-banner status-warning" role="alert">
+                <strong>ยกเลิกรายการในกระเป๋า</strong>
+                <p>คุณยกเลิกคำขอในกระเป๋า ไม่มีการหักเหรียญหรือทำรายการบนเครือข่าย</p>
+              </div>
+            )}
 
-
-          {isExpired && (
-            <div className="status-banner status-expired" role="alert">
-              <strong>คำขอสุ่มหมดเวลา (VRF Request Expired)</strong>
-              <p>คำขอหมายเลข {latestRequest?.id} เกินกำหนด 200 บล็อก สัญญาไม่อนุมัติผลสุ่ม ระบบไม่ได้คืนค่าเล่น 10 PIGGY และไม่มีรางวัลจากคำขอนี้</p>
-            </div>
-          )}
-
-          {isUnknownOrInvalid && (
-            <div className="status-banner status-expired" role="alert">
-              <strong>สถานะคำขอไม่ถูกต้องหรือหมดอายุแล้ว</strong>
-              <p>ไม่พบผลสุ่มที่ถูกต้องสำหรับคำขอนี้บนเครือข่าย</p>
-            </div>
-          )}
-
-          {transactionState === "TRANSACTION_REJECTED" && (
-            <div className="status-banner status-warning" role="alert">
-              <strong>ยกเลิกรายการในกระเป๋า</strong>
-              <p>คุณยกเลิกคำขอในกระเป๋า ไม่มีการหักเหรียญหรือทำรายการบนเครือข่าย</p>
-            </div>
-          )}
-
-          {transactionState === "TRANSACTION_FAILED" && (
-            <div className="status-banner status-error" role="alert">
-              <strong>ทำรายการไม่สำเร็จ</strong>
-              <p>{errorMessage ?? "กรุณาตรวจสอบยอด tBNB สำหรับค่าธรรมเนียมและการเชื่อมต่อเครือข่าย แล้วลองใหม่อีกครั้ง"}</p>
-            </div>
-          )}
-        </div>
+            {transactionState === "TRANSACTION_FAILED" && (
+              <div className="status-banner status-error" role="alert">
+                <strong>ทำรายการไม่สำเร็จ</strong>
+                <p>{errorMessage ?? "กรุณาตรวจสอบยอด tBNB สำหรับค่าธรรมเนียมและการเชื่อมต่อเครือข่าย แล้วลองใหม่อีกครั้ง"}</p>
+              </div>
+            )}
+          </div>
+        )}
       </section>
 
       {/* 3. Right Column: แผงควบคุมเกม (Game Dashboard Card - Glassmorphism Card) */}
@@ -582,7 +542,7 @@ export function RewardWheel({
               type="button"
               className="button neon-yellow-action-btn pulse-gold stop-dashboard-btn"
               onClick={handleStopAndReveal}
-              aria-label="หยุดวงล้อและแสดงผลรางวัล"
+              aria-label="กดหยุดวงล้อ"
             >
               กดหยุดวงล้อ
             </button>
@@ -611,7 +571,7 @@ export function RewardWheel({
             <p className="wheel-hint">เชื่อมต่อกระเป๋าเพื่อดูยอดเหรียญและเริ่มหมุนวงล้อ</p>
           ) : !correctNetwork ? (
             <p className="inline-warning" role="status">กรุณาสลับไปยังเครือข่ายทดลอง BNB Smart Chain</p>
-          ) : approvalNeeded && canSpin ? (
+          ) : isFulfilled && !isRevealed ? null : isRequested ? null : approvalNeeded && canSpin ? (
             <p className="wheel-hint">
               คลิกปุ่ม &quot;Approve 10 $PIGGY&quot; เพื่ออนุมัติและเริ่มหมุนวงล้อเมื่อรายการยืนยัน
             </p>

@@ -131,6 +131,8 @@ export function SquidPotDashboard({ walletPage = false }: { walletPage?: boolean
             correctNetwork={pot.correctNetwork}
             onConnect={pot.connectWallet}
             onSwitchNetwork={pot.switchToConfiguredChain}
+            isRoundExpired={pot.roundPhase === "Expired"}
+            onSettleRound={() => void pot.executeWrite("settle", "settleRound")}
           />
         </>
       )}

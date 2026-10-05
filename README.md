@@ -7,7 +7,7 @@ SquidPot is an academic prototype scoped to BNB Smart Chain Testnet. Phase 1 est
 ## Repository layout
 
 - `docs/MASTER_PROJECT_SPECIFICATION_v3.2.md` — authoritative Phase 1 engineering specification.
-- `contracts/src/PiggyToken.sol` — 18-decimal PIGGY token with 100 PIGGY permissionless faucet for Testnet.
+- `contracts/src/PiggyToken.sol` — 18-decimal PIGGY token with a 100 PIGGY Testnet faucet limited to one claim per address.
 - `contracts/src/SquidPot.sol` — initialization, entry allocation, rounds, liabilities, claims, pause, and direct Chainlink VRF v2.5 lifecycle.
 - `contracts/test/mocks/` — official-ABI-compatible deterministic VRF, fee-on-transfer, and failed-burn mocks.
 - `contracts/test/` — unit, fuzz, and invariant coverage.
@@ -52,4 +52,4 @@ npm run build
 
 ## Deferred scope
 
-SquidPot and PIGGY are deployed on BNB Testnet, the funded VRF subscription authorizes SquidPot as a consumer, and the contract is initialized with 100,500 PIGGY. A live Play/VRF/claim smoke test succeeded. The frontend reads public round state without requiring a connected wallet and is deployed from `main` to Vercel. Configure the four public `NEXT_PUBLIC_*` values in Vercel for both Production and Preview before sharing the live app. The Thai interface, lint, typecheck, and production build are ready; interactive wallet review remains. PIGGY's low-value Testnet `transfer`/`approve`/`transferFrom` flow was verified; no real-value assets or production credentials are used. See `docs/PHASE_3_TESTNET_PREFLIGHT.md` for the deployment record.
+SquidPot and PIGGY are deployed on BNB Testnet, the funded VRF subscription authorizes SquidPot as a consumer, and the current contract is initialized with a 500 PIGGY reserve. A live Play/VRF/claim smoke test succeeded on the earlier deployment. The frontend reads public round state without requiring a connected wallet and is deployed from `main` to Vercel. PIGGY's low-value Testnet `transfer`/`approve`/`transferFrom` flow was verified; no real-value assets or production credentials are used. See `docs/FAUCET_TESTNET_DEPLOYMENT.md` for the current deployment record.

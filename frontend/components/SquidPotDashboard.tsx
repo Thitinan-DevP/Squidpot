@@ -22,7 +22,7 @@ const actionNames: Record<string, string> = {
 export function SquidPotDashboard({ walletPage = false }: { walletPage?: boolean }) {
   const pot = useSquidPot();
   const chainReadsReady = pot.fundingInitialized !== undefined && pot.entryFee !== undefined && pot.roundPhase !== "Unavailable";
-  const walletReadsReady = !pot.isConnected || (pot.tokenBalance !== undefined && pot.allowance !== undefined);
+  const walletReadsReady = !pot.isConnected || (pot.tokenBalance !== undefined && pot.allowance !== undefined && pot.faucetClaimed !== undefined);
   const readsReady = chainReadsReady && walletReadsReady;
   const balanceSufficient = pot.isConnected && pot.tokenBalance !== undefined && pot.entryFee !== undefined && pot.tokenBalance >= pot.entryFee;
   const isActive = pot.transactionState !== undefined;
@@ -88,10 +88,11 @@ export function SquidPotDashboard({ walletPage = false }: { walletPage?: boolean
               type="button"
               className="button button-primary"
               onClick={() => void pot.claimFaucet()}
-              disabled={!frontendConfig || pot.faucetPending}
+              disabled={!frontendConfig || pot.faucetPending || (pot.isConnected && pot.faucetClaimed !== false)}
             >
-              {pot.faucetPending ? "กำลังรับ PIGGY…" : pot.isConnected ? "รับฟรี 100 $PIGGY" : "เชื่อมต่อกระเป๋าเพื่อรับฟรี 100 $PIGGY"}
+              {pot.faucetPending ? "กำลังรับ PIGGY…" : pot.isConnected && pot.faucetClaimed === undefined ? "กำลังตรวจสอบสิทธิ์…" : pot.isConnected && pot.faucetClaimed ? "รับ PIGGY ไปแล้ว (หนึ่งครั้งต่อกระเป๋า)" : pot.isConnected ? "รับฟรี 100 $PIGGY" : "เชื่อมต่อกระเป๋าเพื่อรับฟรี 100 $PIGGY"}
             </button>
+            {pot.isConnected && pot.faucetClaimed === false && <p className="muted">จำกัดการรับ 100 PIGGY หนึ่งครั้งต่อกระเป๋า</p>}
             {pot.faucetMessage && <p className="faucet-toast" role="status">{pot.faucetMessage}</p>}
             {pot.faucetError && <p className="inline-error" role="alert">{pot.faucetError}</p>}
           </section>

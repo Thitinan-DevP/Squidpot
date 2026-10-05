@@ -101,6 +101,7 @@ export function useSquidPot() {
     return [
       { address: frontendConfig.piggyAddress, abi: piggyAbi, functionName: "balanceOf", args: [account] },
       { address: frontendConfig.piggyAddress, abi: piggyAbi, functionName: "allowance", args: [account, frontendConfig.squidPotAddress] },
+      { address: frontendConfig.piggyAddress, abi: piggyAbi, functionName: "hasClaimedFaucet", args: [account] },
       { address: frontendConfig.squidPotAddress, abi: squidPotAbi, functionName: "ENTRY_FEE" },
       { address: frontendConfig.squidPotAddress, abi: squidPotAbi, functionName: "R_MAX" },
       { address: frontendConfig.squidPotAddress, abi: squidPotAbi, functionName: "MAX_PENDING_REQUESTS" },
@@ -163,24 +164,25 @@ export function useSquidPot() {
   const values = reads.data as readonly unknown[] | undefined;
   const tokenBalance = address ? bigintValue(readValue<unknown>(values, 0)) : undefined;
   const allowance = address ? bigintValue(readValue<unknown>(values, 1)) : undefined;
-  const entryFee = bigintValue(readValue<unknown>(values, 2));
-  const maxReward = bigintValue(readValue<unknown>(values, 3));
-  const maxRequests = bigintValue(readValue<unknown>(values, 4));
-  const requestTimeoutBlocks = bigintValue(readValue<unknown>(values, 5));
-  const currentRoundId = bigintValue(readValue<unknown>(values, 6));
-  const roundPhaseRaw = readValue<number | bigint>(values, 7);
+  const faucetClaimed = address ? readValue<boolean>(values, 2) : undefined;
+  const entryFee = bigintValue(readValue<unknown>(values, 3));
+  const maxReward = bigintValue(readValue<unknown>(values, 4));
+  const maxRequests = bigintValue(readValue<unknown>(values, 5));
+  const requestTimeoutBlocks = bigintValue(readValue<unknown>(values, 6));
+  const currentRoundId = bigintValue(readValue<unknown>(values, 7));
+  const roundPhaseRaw = readValue<number | bigint>(values, 8);
   const roundPhase = roundPhaseLabel(roundPhaseRaw);
-  const deadline = bigintValue(readValue<unknown>(values, 8));
-  const hardDeadline = bigintValue(readValue<unknown>(values, 9));
-  const currentPrizePool = bigintValue(readValue<unknown>(values, 10));
-  const availableSlotReserve = bigintValue(readValue<unknown>(values, 11));
-  const activePendingRequests = bigintValue(readValue<unknown>(values, 12));
-  const paused = readValue<boolean>(values, 13);
-  const fundingInitialized = readValue<boolean>(values, 14);
-  const lastPlayer = readValue<Address>(values, 15);
-  const pendingSlotRewards = address ? bigintValue(readValue<unknown>(values, 16)) : undefined;
-  const pendingPreviousRewards = address ? bigintValue(readValue<unknown>(values, 17)) : undefined;
-  const pendingPrize = address ? bigintValue(readValue<unknown>(values, 18)) : undefined;
+  const deadline = bigintValue(readValue<unknown>(values, 9));
+  const hardDeadline = bigintValue(readValue<unknown>(values, 10));
+  const currentPrizePool = bigintValue(readValue<unknown>(values, 11));
+  const availableSlotReserve = bigintValue(readValue<unknown>(values, 12));
+  const activePendingRequests = bigintValue(readValue<unknown>(values, 13));
+  const paused = readValue<boolean>(values, 14);
+  const fundingInitialized = readValue<boolean>(values, 15);
+  const lastPlayer = readValue<Address>(values, 16);
+  const pendingSlotRewards = address ? bigintValue(readValue<unknown>(values, 17)) : undefined;
+  const pendingPreviousRewards = address ? bigintValue(readValue<unknown>(values, 18)) : undefined;
+  const pendingPrize = address ? bigintValue(readValue<unknown>(values, 19)) : undefined;
   const chainTimestamp = block?.timestamp;
   const correctNetwork = Boolean(frontendConfig && chainId === frontendConfig.chainId);
 
@@ -315,6 +317,14 @@ export function useSquidPot() {
       setFaucetError("กรุณาเปลี่ยนเป็นเครือข่ายทดลอง BNB Smart Chain ก่อนรับ PIGGY");
       return;
     }
+    if (faucetClaimed === true) {
+      setFaucetError("กระเป๋านี้รับ PIGGY จาก Faucet ไปแล้ว รับได้หนึ่งครั้งต่อกระเป๋า");
+      return;
+    }
+    if (faucetClaimed === undefined) {
+      setFaucetError("กำลังตรวจสอบสิทธิ์ Faucet กรุณารอสักครู่แล้วลองใหม่");
+      return;
+    }
     if (faucetPending) return;
     setFaucetPending(true);
     setFaucetError(undefined);
@@ -370,6 +380,7 @@ export function useSquidPot() {
     chainTimestamp,
     tokenBalance,
     allowance,
+    faucetClaimed,
     entryFee,
     requestTimeoutBlocks,
     maxReward,

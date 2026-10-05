@@ -968,54 +968,61 @@ td { font-variant-numeric: tabular-nums; }
 }
 .compact-reward-tiers {
   width: 100%;
-  max-width: 270px;
-  margin: 10px auto 4px;
-  padding: 6px 12px 8px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.08) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.36);
-  border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  max-width: 100%;
+  margin: 0;
+  padding: 8px 14px 10px;
+  background: rgba(255, 255, 255, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   text-align: center;
 }
 
 .compact-table-title {
-  font-size: 0.82rem;
-  font-weight: 500;
-  color: #ffffff;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #78350f;
   padding-bottom: 4px;
-  margin-bottom: 4px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  margin-bottom: 6px;
+  border-bottom: 1px solid rgba(180, 83, 9, 0.18);
   letter-spacing: 0.02em;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+  text-shadow: none;
 }
 
 .compact-reward-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.76rem;
+  font-size: 0.78rem;
 }
 
 .compact-reward-table th {
   padding: 3px 8px;
   font-size: 0.74rem;
-  font-weight: 450;
-  color: #fef08a;
-  background: rgba(0, 0, 0, 0.30);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+  font-weight: 500;
+  color: #78350f;
+  background: rgba(255, 255, 255, 0.30);
+  border-bottom: 1px solid rgba(180, 83, 9, 0.18);
   text-align: center;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 .compact-reward-table td {
-  padding: 3px 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
-  text-align: center;
+  padding: 3.5px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+  color: #451a03;
+  font-weight: 500;
+  text-shadow: none;
   font-variant-numeric: tabular-nums;
-  color: #ffffff;
-  font-weight: 350;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+}
+
+.compact-reward-table td:first-child {
+  text-align: left;
+}
+
+.compact-reward-table td:last-child {
+  text-align: right;
+  font-weight: 600;
 }
 
 .compact-reward-table tr:last-child td {
@@ -1023,10 +1030,10 @@ td { font-variant-numeric: tabular-nums; }
 }
 
 .compact-reward-table .jackpot-row td {
-  background: rgba(250, 204, 21, 0.28);
-  font-weight: 500;
-  color: #fef08a;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+  background: rgba(250, 204, 21, 0.35);
+  font-weight: 700;
+  color: #92400e;
+  text-shadow: none;
 }
 .claim-zone {
   display: flex;

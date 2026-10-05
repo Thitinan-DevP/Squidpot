@@ -431,34 +431,7 @@ export function RewardWheel({
           </div>
         </div>
 
-        {/* 2.1 ตารางเงินรางวัลขนาดกะทัดรัด (Compact Reward Tiers Table ใต้วงล้อ) */}
-        <div className="compact-reward-tiers">
-          <div className="compact-table-title">ผลรางวัล</div>
-          <table className="compact-reward-table">
-            <tbody>
-              <tr>
-                <td><strong>x0</strong></td>
-                <td>0 $PIGGY</td>
-              </tr>
-              <tr>
-                <td><strong>x1</strong></td>
-                <td>10 $PIGGY</td>
-              </tr>
-              <tr>
-                <td><strong>x2</strong></td>
-                <td>20 $PIGGY</td>
-              </tr>
-              <tr>
-                <td><strong>x5</strong></td>
-                <td>50 $PIGGY</td>
-              </tr>
-              <tr className="jackpot-row">
-                <td><strong>x10</strong></td>
-                <td>100 $PIGGY</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+
 
         {/* Error / Alert Status Panel (เฉพาะกรณีเกิดข้อผิดพลาด) */}
         {(isExpired || isUnknownOrInvalid || transactionState === "TRANSACTION_REJECTED" || transactionState === "TRANSACTION_FAILED") && (
@@ -496,7 +469,36 @@ export function RewardWheel({
 
       {/* 3. Right Column: แผงควบคุมเกม (Game Dashboard Card - Glassmorphism Card) */}
       <section className="card game-dashboard-card" aria-label="แผงควบคุมเกม (Game Dashboard)">
-        {/* 3.1 โซนถอนเงินรางวัล (Claim Section) - การ์ดรางวัลที่ยังไม่ได้ถอนอยู่บนสุด */}
+        {/* 3.0 ตารางเงินรางวัลขนาดกะทัดรัด (Compact Reward Tiers Table - ด้านบนการ์ด) */}
+        <div className="compact-reward-tiers">
+          <div className="compact-table-title">ผลรางวัล</div>
+          <table className="compact-reward-table">
+            <tbody>
+              <tr>
+                <td><strong>x0</strong></td>
+                <td>0 $PIGGY</td>
+              </tr>
+              <tr>
+                <td><strong>x1</strong></td>
+                <td>10 $PIGGY</td>
+              </tr>
+              <tr>
+                <td><strong>x2</strong></td>
+                <td>20 $PIGGY</td>
+              </tr>
+              <tr>
+                <td><strong>x5</strong></td>
+                <td>50 $PIGGY</td>
+              </tr>
+              <tr className="jackpot-row">
+                <td><strong>x10</strong></td>
+                <td>100 $PIGGY</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* 3.1 โซนถอนเงินรางวัล (Claim Section) - การ์ดรางวัลที่ยังไม่ได้ถอน */}
         <div className="claim-zone">
           <div className="claim-header-row">
             <div className="claim-balance-info">

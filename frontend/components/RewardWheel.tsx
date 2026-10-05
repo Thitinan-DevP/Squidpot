@@ -104,14 +104,7 @@ export function getRewardMultiplierText(reward?: bigint): string {
 
 import { formatUnits } from "viem";
 
-function SparkleCelebrationIcon() {
-  return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="celebrate-svg-icon">
-      <path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z" fill="#facc15" stroke="#ca8a04" />
-      <path d="M18 4l1 3 3 1-3 1-1 3-1-3-3-1 3-1z" fill="#fef08a" stroke="#ca8a04" strokeWidth="1" />
-    </svg>
-  );
-}
+
 
 function HappyFaceIcon() {
   return (
@@ -509,30 +502,7 @@ export function RewardWheel({
             </div>
           )}
 
-          {isFulfilled && isRevealed && (
-            <div className="neon-badge neon-gold-celebrate" role="region" aria-label="ผลรางวัลที่ยืนยันแล้ว">
-              <span className="celebrate-icon-wrap" aria-hidden="true">
-                <SparkleCelebrationIcon />
-              </span>
-              <div>
-                <strong>
-                  {latestRequest?.reward && latestRequest.reward > BigInt(0)
-                    ? `ยินดีด้วย! คุณได้รับ ${exactRewardText}`
-                    : `ครั้งนี้ยังไม่ถูกรางวัล (0 $PIGGY)`}
-                </strong>
-                <p className="muted">
-                  ผลสุ่มนี้อ่านจากสัญญาบนเครือข่ายโดยตรง (รางวัล: {exactRewardText} · ตัวคูณ: {getRewardMultiplierText(latestRequest?.reward)} · requestId: {latestRequest?.id})
-                </p>
-                <button
-                  type="button"
-                  className="view-result-dialog-btn"
-                  onClick={() => setShowResultModal(true)}
-                >
-                  เปิดหน้าต่างแจ้งผลรางวัล
-                </button>
-              </div>
-            </div>
-          )}
+
 
           {isExpired && (
             <div className="status-banner status-expired" role="alert">

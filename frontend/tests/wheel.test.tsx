@@ -98,7 +98,7 @@ describe("RewardWheel unit and integration behavior", () => {
 
     expect(container.querySelector(".wheel-spinning")).not.toBeInTheDocument();
     expect(screen.queryByText("Waiting for verified on-chain result")).not.toBeInTheDocument();
-    expect(screen.queryByRole("region", { name: "ผลรางวัลที่ยืนยันแล้ว" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Stop & Reveal" })).not.toBeInTheDocument();
 
     // Transaction pending state (before receipt confirmed)
@@ -114,7 +114,7 @@ describe("RewardWheel unit and integration behavior", () => {
     );
 
     expect(container.querySelector(".wheel-spinning")).not.toBeInTheDocument();
-    expect(screen.queryByRole("region", { name: "ผลรางวัลที่ยืนยันแล้ว" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Stop & Reveal" })).not.toBeInTheDocument();
   });
 
@@ -144,7 +144,7 @@ describe("RewardWheel unit and integration behavior", () => {
     // Stop & Reveal is not enabled
     expect(screen.queryByRole("button", { name: "Stop & Reveal" })).not.toBeInTheDocument();
     // No reward is invented or shown before fulfillment
-    expect(screen.queryByRole("region", { name: "ผลรางวัลที่ยืนยันแล้ว" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
   it("proves Stop & Reveal is enabled only on FULFILLED and is presentation-only without contract calls", async () => {
@@ -173,8 +173,8 @@ describe("RewardWheel unit and integration behavior", () => {
     const stopRevealBtn = screen.getByRole("button", { name: "Stop & Reveal" });
     expect(stopRevealBtn).toBeInTheDocument();
 
-    // Before clicking Stop & Reveal, reward is not yet displayed in the result card
-    expect(screen.queryByRole("region", { name: "ผลรางวัลที่ยืนยันแล้ว" })).not.toBeInTheDocument();
+    // Before clicking Stop & Reveal, reward modal is not yet shown
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 
     // Click Stop & Reveal: presentation-only action
     await user.click(stopRevealBtn);
@@ -182,11 +182,6 @@ describe("RewardWheel unit and integration behavior", () => {
     // CRITICAL SAFETY PROOF: Zero transactions, zero writes, zero contract side-effects
     expect(onSpin).not.toHaveBeenCalled();
     expect(onClaimReward).not.toHaveBeenCalled();
-
-    // Reward is now revealed matching exactly the contract's 20 PIGGY
-    const resultRegion = screen.getByRole("region", { name: "ผลรางวัลที่ยืนยันแล้ว" });
-    expect(resultRegion).toBeInTheDocument();
-    expect(resultRegion).toHaveTextContent("20 PIGGY");
 
     // Since reward > 0, Claim PIGGY reward button is shown
     const claimBtn = screen.getByRole("button", { name: "Claim PIGGY reward" });
@@ -222,9 +217,6 @@ describe("RewardWheel unit and integration behavior", () => {
     const stopRevealBtn = screen.getByRole("button", { name: "Stop & Reveal" });
     await user.click(stopRevealBtn);
 
-    // Result shows exactly 0 PIGGY
-    const resultRegion = screen.getByRole("region", { name: "ผลรางวัลที่ยืนยันแล้ว" });
-    expect(resultRegion).toBeInTheDocument();
     // Claim button is present but disabled because reward is zero
     expect(screen.getByRole("button", { name: "Claim PIGGY reward" })).toBeDisabled();
   });
@@ -275,7 +267,7 @@ describe("RewardWheel unit and integration behavior", () => {
     );
 
     expect(screen.getByRole("alert")).toHaveTextContent("คำขอสุ่มหมดเวลา (VRF Request Expired)");
-    expect(screen.queryByRole("region", { name: "ผลรางวัลที่ยืนยันแล้ว" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 
     // Rejected transaction
     rerender(
@@ -290,7 +282,7 @@ describe("RewardWheel unit and integration behavior", () => {
     );
 
     expect(screen.getByRole("alert")).toHaveTextContent("ยกเลิกรายการในกระเป๋า");
-    expect(screen.queryByRole("region", { name: "ผลรางวัลที่ยืนยันแล้ว" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 
     // Failed transaction
     rerender(
@@ -307,7 +299,7 @@ describe("RewardWheel unit and integration behavior", () => {
 
     expect(screen.getByRole("alert")).toHaveTextContent("ทำรายการไม่สำเร็จ");
     expect(screen.getByRole("alert")).toHaveTextContent("Custom testnet error");
-    expect(screen.queryByRole("region", { name: "ผลรางวัลที่ยืนยันแล้ว" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
   it("keeps the wheel spinning when FULFILLED until the player explicitly clicks Stop & Reveal", async () => {
@@ -348,7 +340,6 @@ describe("RewardWheel unit and integration behavior", () => {
 
     // After stopping, spinning class is removed
     expect(container.querySelector(".wheel-svg")).not.toHaveClass("wheel-spinning");
-    expect(screen.getByRole("region", { name: "ผลรางวัลที่ยืนยันแล้ว" })).toHaveTextContent("50 PIGGY");
   });
 
   it("opens a celebration Alert dialog modal when the wheel reveals the result and allows closing", async () => {
@@ -390,11 +381,6 @@ describe("RewardWheel unit and integration behavior", () => {
     const closeBtn = screen.getByRole("button", { name: "ปิดหน้าต่างผลรางวัล" });
     await user.click(closeBtn);
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-
-    // Player can reopen the modal using the button in the status panel
-    const reopenBtn = screen.getByRole("button", { name: "เปิดหน้าต่างแจ้งผลรางวัล" });
-    await user.click(reopenBtn);
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
 
     vi.mocked(useReducedMotion).mockReturnValue(false);
   });

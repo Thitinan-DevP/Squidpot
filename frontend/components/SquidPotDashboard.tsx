@@ -95,7 +95,6 @@ export function SquidPotDashboard({ walletPage = false }: { walletPage?: boolean
             <dl className="metric-grid two-column">
               <div><dt>ที่อยู่กระเป๋า</dt><dd title={pot.address}>{pot.address ?? "ยังไม่ได้เชื่อมต่อ"}</dd></div>
               <div><dt>ยอดคงเหลือ</dt><dd>{pot.isConnected && pot.tokenBalance === undefined ? "กำลังอ่านยอด…" : formatPiggy(pot.tokenBalance)}</dd></div>
-              <div><dt>ยอดที่อนุมัติให้สัญญาใช้</dt><dd>{formatPiggy(pot.allowance)}</dd></div>
               <div><dt>เครือข่าย</dt><dd>{pot.correctNetwork ? "เครือข่ายทดลอง BNB Smart Chain" : "ยังไม่ได้เชื่อมต่อเครือข่ายทดลอง"}</dd></div>
             </dl>
             {pot.approvalNeeded && (

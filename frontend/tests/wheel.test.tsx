@@ -392,7 +392,7 @@ describe("RewardWheel unit and integration behavior", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 
     // Player can reopen the modal using the button in the status panel
-    const reopenBtn = screen.getByRole("button", { name: "📢 เปิดหน้าต่างแจ้งผลรางวัล" });
+    const reopenBtn = screen.getByRole("button", { name: "เปิดหน้าต่างแจ้งผลรางวัล" });
     await user.click(reopenBtn);
     expect(screen.getByRole("dialog")).toBeInTheDocument();
 

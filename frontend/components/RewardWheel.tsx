@@ -113,6 +113,64 @@ function SparkleCelebrationIcon() {
   );
 }
 
+function HappyFaceIcon() {
+  return (
+    <svg width="46" height="46" viewBox="0 0 48 48" fill="none" aria-hidden="true" className="face-svg-icon">
+      <circle cx="24" cy="24" r="22" fill="#FACC15" stroke="#EAB308" strokeWidth="2.5" />
+      <circle cx="11" cy="28" r="4" fill="#F472B6" opacity="0.65" />
+      <circle cx="37" cy="28" r="4" fill="#F472B6" opacity="0.65" />
+      <path d="M14 19 Q 18.5 12, 23 19" stroke="#78350F" strokeWidth="3" strokeLinecap="round" fill="none" />
+      <path d="M25 19 Q 29.5 12, 34 19" stroke="#78350F" strokeWidth="3" strokeLinecap="round" fill="none" />
+      <path d="M15 26 Q 24 40, 33 26" fill="#991B1B" stroke="#78350F" strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M19 32 Q 24 37, 29 32 Q 24 35, 19 32" fill="#F472B6" />
+      <path d="M24 3 L 25.5 6.5 L 29 8 L 25.5 9.5 L 24 13 L 22.5 9.5 L 19 8 L 22.5 6.5 Z" fill="#FFFBEB" stroke="#F59E0B" strokeWidth="0.8" />
+    </svg>
+  );
+}
+
+function SadFaceIcon() {
+  return (
+    <svg width="46" height="46" viewBox="0 0 48 48" fill="none" aria-hidden="true" className="face-svg-icon">
+      <circle cx="24" cy="24" r="22" fill="#F1F5F9" stroke="#94A3B8" strokeWidth="2.5" />
+      <path d="M14 16 Q 18.5 19.5, 22 17.5" stroke="#475569" strokeWidth="2.2" strokeLinecap="round" fill="none" />
+      <path d="M26 17.5 Q 29.5 19.5, 34 16" stroke="#475569" strokeWidth="2.2" strokeLinecap="round" fill="none" />
+      <circle cx="18" cy="22.5" r="3" fill="#334155" />
+      <circle cx="17.2" cy="21.5" r="1" fill="#FFFFFF" />
+      <circle cx="30" cy="22.5" r="3" fill="#334155" />
+      <circle cx="29.2" cy="21.5" r="1" fill="#FFFFFF" />
+      <path d="M17 33 Q 24 26, 31 33" stroke="#475569" strokeWidth="2.8" strokeLinecap="round" fill="none" />
+      <path d="M33.5 25.5 C 33.5 25.5, 35 28.5, 35 29.5 C 35 30.3, 34.3 31, 33.5 31 C 32.7 31, 32 30.3, 32 29.5 C 32 28.5, 33.5 25.5, 33.5 25.5 Z" fill="#60A5FA" />
+    </svg>
+  );
+}
+
+function CoinsIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ verticalAlign: "-3px", marginRight: "6px" }}>
+      <circle cx="9" cy="9" r="7" fill="#FDE047" stroke="#B45309" strokeWidth="1.5" />
+      <path d="M21 12c0 3.866-3.134 7-7 7" stroke="#B45309" strokeWidth="1.5" />
+      <circle cx="15" cy="15" r="6" fill="#FEF08A" stroke="#B45309" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
+function ArrowReloadIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ verticalAlign: "-3px", marginRight: "6px" }}>
+      <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.8 1.03 6.43 2.7L21 8" />
+      <path d="M21 3v5h-5" />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M1 1l12 12M13 1L1 13" />
+    </svg>
+  );
+}
+
 type Props = {
   canSpin: boolean;
   approvalNeeded: boolean;
@@ -388,7 +446,7 @@ export function RewardWheel({
                 onClick={handleStopAndReveal}
                 aria-label="Stop & Reveal"
               >
-                🛑 กดเพื่อหยุดวงล้อ! (Stop &amp; Reveal)
+                กดเพื่อหยุดวงล้อ! (Stop &amp; Reveal)
               </button>
             </div>
           )}
@@ -445,7 +503,7 @@ export function RewardWheel({
           {isFulfilled && !isRevealed && (
             <div className="status-banner status-fulfilled-pending pulse-gold" role="status">
               <div>
-                <strong>🎉 ผลรางวัลพร้อมแล้ว! (VRF Fulfilled)</strong>
+                <strong>ผลรางวัลพร้อมแล้ว! (VRF Fulfilled)</strong>
                 <p>กดปุ่ม &quot;กดเพื่อหยุดวงล้อ! (Stop &amp; Reveal)&quot; เพื่อหยุดวงล้อและเปิดผลรางวัล</p>
               </div>
             </div>
@@ -470,7 +528,7 @@ export function RewardWheel({
                   className="view-result-dialog-btn"
                   onClick={() => setShowResultModal(true)}
                 >
-                  📢 เปิดหน้าต่างแจ้งผลรางวัล
+                  เปิดหน้าต่างแจ้งผลรางวัล
                 </button>
               </div>
             </div>
@@ -556,7 +614,7 @@ export function RewardWheel({
               onClick={handleStopAndReveal}
               aria-label="หยุดวงล้อและแสดงผลรางวัล"
             >
-              🛑 กดหยุดวงล้อ! (Stop &amp; Reveal)
+              กดหยุดวงล้อ! (Stop &amp; Reveal)
             </button>
           ) : (
             <button
@@ -620,13 +678,13 @@ export function RewardWheel({
               }}
               aria-label="ปิดหน้าต่างผลรางวัล"
             >
-              ✕
+              <CloseIcon />
             </button>
 
             {hasClaimableReward ? (
               <>
                 <div className="modal-badge-glow" aria-hidden="true">
-                  🎉
+                  <HappyFaceIcon />
                 </div>
                 <h2 id="result-modal-title" className="modal-title">
                   ยินดีด้วย! คุณได้รับรางวัล
@@ -651,7 +709,7 @@ export function RewardWheel({
                     }}
                     aria-label="ถอนเงินรางวัลทันที"
                   >
-                    💰 ถอนเงินรางวัลทันที ({exactRewardText})
+                    <CoinsIcon /> ถอนเงินรางวัลทันที ({exactRewardText})
                   </button>
                   <button
                     type="button"
@@ -661,14 +719,14 @@ export function RewardWheel({
                       setShowResultModal(false);
                     }}
                   >
-                    🎮 ปิดหน้าต่าง / เล่นรอบต่อไป
+                    ปิดหน้าต่าง / เล่นรอบต่อไป
                   </button>
                 </div>
               </>
             ) : (
               <>
                 <div className="modal-badge-glow neutral" aria-hidden="true">
-                  🍀
+                  <SadFaceIcon />
                 </div>
                 <h2 id="result-modal-title" className="modal-title lose-title">
                   ครั้งนี้ยังไม่ถูกรางวัล
@@ -690,7 +748,7 @@ export function RewardWheel({
                       setShowResultModal(false);
                     }}
                   >
-                    🔄 ลองหมุนอีกครั้ง
+                    <ArrowReloadIcon /> ลองหมุนอีกครั้ง
                   </button>
                 </div>
               </>

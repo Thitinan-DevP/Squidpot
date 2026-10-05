@@ -14,24 +14,24 @@ contract SquidPot is ReentrancyGuard, Pausable, VRFConsumerBaseV2Plus {
     using SafeCast for uint256;
 
     uint256 public constant ENTRY_FEE = 10 ether;
-    uint256 public constant CURRENT_PRIZE_ALLOCATION = 4 ether;
-    uint256 public constant SLOT_ALLOCATION = 3 ether;
-    uint256 public constant PREVIOUS_PLAYER_ALLOCATION = 1.5 ether;
-    uint256 public constant ROLLOVER_ALLOCATION = 1 ether;
+    uint256 public constant CURRENT_PRIZE_ALLOCATION = 0;
+    uint256 public constant SLOT_ALLOCATION = 9.5 ether;
+    uint256 public constant PREVIOUS_PLAYER_ALLOCATION = 0;
+    uint256 public constant ROLLOVER_ALLOCATION = 0;
     uint256 public constant BURN_ALLOCATION = 0.5 ether;
-    uint256 public constant GENESIS_PRIZE_POOL = 100_000 ether;
+    uint256 public constant GENESIS_PRIZE_POOL = 0;
     uint256 public constant INITIAL_SLOT_SEED = 500 ether;
-    uint256 public constant INITIAL_FUNDING = GENESIS_PRIZE_POOL + INITIAL_SLOT_SEED;
+    uint256 public constant INITIAL_FUNDING = INITIAL_SLOT_SEED;
 
     uint256 public constant R_MAX = 50 ether;
     uint256 public constant MAX_PENDING_REQUESTS = 10;
     uint256 public constant REQUEST_TIMEOUT_BLOCKS = 200;
     uint32 public constant NUM_WORDS = 1;
 
-    uint256 public constant ROUND_HARD_DURATION = 24 hours;
-    uint256 public constant ROUND_FAST_EXTENSION = 3 minutes;
-    uint256 public constant ROUND_SLOW_EXTENSION = 30 seconds;
-    uint256 public constant ROUND_EXTENSION_CUTOFF = 12 hours;
+    uint256 public constant ROUND_HARD_DURATION = 0;
+    uint256 public constant ROUND_FAST_EXTENSION = 0;
+    uint256 public constant ROUND_SLOW_EXTENSION = 0;
+    uint256 public constant ROUND_EXTENSION_CUTOFF = 0;
 
     address public constant DEAD_ADDRESS = address(0x000000000000000000000000000000000000dEaD);
     bytes32 private constant CALLBACK_REASON_LATE = "LATE";
@@ -192,24 +192,26 @@ contract SquidPot is ReentrancyGuard, Pausable, VRFConsumerBaseV2Plus {
         uint256 received = afterBalance - beforeBalance;
         if (received != INITIAL_FUNDING) revert ExactFundingRequired(INITIAL_FUNDING, received);
 
-        // Accounting is updated only after the exact receipt has been verified.
-        currentPrizePool = GENESIS_PRIZE_POOL;
         availableSlotReserve = INITIAL_SLOT_SEED;
         fundingInitialized = true;
 
-        emit FundingInitialized(msg.sender, currentRoundId, GENESIS_PRIZE_POOL, INITIAL_SLOT_SEED, received);
+        emit FundingInitialized(msg.sender, currentRoundId, 0, INITIAL_SLOT_SEED, received);
+    }
+
+    function fundReserve(uint256 amount) external nonReentrant {
+        require(amount > 0, "amount=0");
+        uint256 beforeBalance = piggy.balanceOf(address(this));
+        piggy.safeTransferFrom(msg.sender, address(this), amount);
+        uint256 afterBalance = piggy.balanceOf(address(this));
+        uint256 received = afterBalance - beforeBalance;
+        availableSlotReserve += received;
     }
 
     function play() external nonReentrant whenNotPaused returns (uint256 requestId) {
         if (!fundingInitialized) revert NotInitialized();
-        RoundPhase phase = roundStatus();
-        if (phase == RoundPhase.EXPIRED) revert RoundIsExpired();
-        if (phase == RoundPhase.OPEN && block.timestamp >= deadline) revert DeadlineReached();
         if (availableSlotReserve < R_MAX || activePendingRequests >= MAX_PENDING_REQUESTS) {
             revert InsufficientSlotCapacity();
         }
-
-        _advanceRoundTimer();
 
         uint256 playerBalanceBefore = piggy.balanceOf(msg.sender);
         uint256 contractBalanceBefore = piggy.balanceOf(address(this));
@@ -229,18 +231,7 @@ contract SquidPot is ReentrancyGuard, Pausable, VRFConsumerBaseV2Plus {
             revert ExactFundingRequired(BURN_ALLOCATION, deadAfter - deadBefore);
         }
 
-        currentPrizePool += CURRENT_PRIZE_ALLOCATION;
         availableSlotReserve += SLOT_ALLOCATION;
-        rolloverReserve += ROLLOVER_ALLOCATION;
-
-        if (lastPlayer == address(0) || lastPlayer == msg.sender) {
-            rolloverReserve += PREVIOUS_PLAYER_ALLOCATION;
-        } else {
-            pendingPreviousRewards[lastPlayer] += PREVIOUS_PLAYER_ALLOCATION;
-            totalPendingPreviousRewards += PREVIOUS_PLAYER_ALLOCATION;
-        }
-
-        lastPlayer = msg.sender;
         numberOfPlays++;
 
         requestCreationInProgress = true;
@@ -262,73 +253,34 @@ contract SquidPot is ReentrancyGuard, Pausable, VRFConsumerBaseV2Plus {
             maxReserved: R_MAX.toUint96(),
             actualReward: 0,
             requestedAtBlock: block.number.toUint64(),
-            roundId: currentRoundId.toUint64(),
+            roundId: 1,
             status: SlotStatus.REQUESTED
         });
-        availableSlotReserve -= R_MAX;
+
         reservedSlotLiability += R_MAX;
+        availableSlotReserve -= R_MAX;
         activePendingRequests++;
 
-        emit SlotRequestCreated(requestId, msg.sender, currentRoundId, R_MAX, block.number);
+        emit SlotRequestCreated(requestId, msg.sender, 1, R_MAX, block.number);
         emit Played(
             msg.sender,
-            currentRoundId,
+            1,
             requestId,
             ENTRY_FEE,
-            CURRENT_PRIZE_ALLOCATION,
+            0,
             SLOT_ALLOCATION,
-            PREVIOUS_PLAYER_ALLOCATION,
-            ROLLOVER_ALLOCATION,
+            0,
+            0,
             BURN_ALLOCATION
         );
     }
 
-    function _advanceRoundTimer() internal {
-        if (roundStartedAt == 0) {
-            roundStartedAt = block.timestamp;
-            hardDeadline = block.timestamp + ROUND_HARD_DURATION;
-            deadline = block.timestamp + ROUND_FAST_EXTENSION;
-            return;
-        }
-
-        uint256 elapsed = block.timestamp - roundStartedAt;
-        uint256 extension = elapsed < ROUND_EXTENSION_CUTOFF ? ROUND_FAST_EXTENSION : ROUND_SLOW_EXTENSION;
-        uint256 proposedDeadline = block.timestamp + extension;
-        deadline = proposedDeadline < hardDeadline ? proposedDeadline : hardDeadline;
+    function roundStatus() public pure returns (RoundPhase) {
+        return RoundPhase.OPEN;
     }
 
-    function roundStatus() public view returns (RoundPhase) {
-        if (roundStartedAt == 0) return RoundPhase.WAITING;
-        return block.timestamp < deadline ? RoundPhase.OPEN : RoundPhase.EXPIRED;
-    }
-
-    function settleRound() external nonReentrant {
-        if (roundStatus() == RoundPhase.WAITING) revert RoundIsWaiting();
-        if (roundStatus() != RoundPhase.EXPIRED) revert DeadlineReached();
-        if (lastPlayer == address(0)) revert EmptyExpiredRound();
-
-        uint256 settledRoundId = currentRoundId;
-        address winner = lastPlayer;
-        uint256 prize = currentPrizePool;
-        uint256 rollover = rolloverReserve;
-        uint256 startedAt = roundStartedAt;
-        uint256 oldDeadline = deadline;
-        uint256 plays = numberOfPlays;
-
-        currentPrizePool = 0;
-        pendingPrizes[winner] += prize;
-        totalPendingPrizes += prize;
-
-        currentPrizePool = rollover;
-        rolloverReserve = 0;
-        currentRoundId++;
-        roundStartedAt = 0;
-        deadline = 0;
-        hardDeadline = 0;
-        lastPlayer = address(0);
-        numberOfPlays = 0;
-
-        emit RoundSettled(settledRoundId, winner, prize, startedAt, oldDeadline, block.timestamp, plays, rollover);
+    function settleRound() external pure {
+        revert RoundIsWaiting();
     }
 
     function fulfillRandomWords(
@@ -412,8 +364,7 @@ contract SquidPot is ReentrancyGuard, Pausable, VRFConsumerBaseV2Plus {
     }
 
     function totalLiabilities() public view returns (uint256) {
-        return currentPrizePool + availableSlotReserve + reservedSlotLiability + totalPendingSlotRewards
-            + totalPendingPreviousRewards + rolloverReserve + totalPendingPrizes;
+        return availableSlotReserve + reservedSlotLiability + totalPendingSlotRewards;
     }
 
     function contractBalance() public view returns (uint256) {

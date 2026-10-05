@@ -17,6 +17,8 @@ contracts/coverage/
 contracts/lcov.info
 
 # Node and frontend artifacts
+node_modules/
+contracts/node_modules/
 frontend/node_modules/
 frontend/.next/
 frontend/.env

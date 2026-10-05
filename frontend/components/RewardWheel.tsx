@@ -549,18 +549,6 @@ export function RewardWheel({
             >
               สลับเป็นเครือข่าย BNB Testnet
             </button>
-          ) : isRoundExpired && onSettleRound ? (
-            <button
-              type="button"
-              className="button neon-yellow-action-btn"
-              disabled={isActionBusy}
-              onClick={() => void onSettleRound()}
-              aria-label="ปิดรอบและเริ่มรอบใหม่"
-            >
-              {isActionBusy && transactionState === "SETTLEMENT_PENDING"
-                ? "กำลังปิดรอบ..."
-                : "หมดเวลาแล้ว — ปิดรอบเพื่อเริ่มรอบใหม่"}
-            </button>
           ) : isFulfilled && !isRevealed ? (
             <button
               type="button"
@@ -595,10 +583,6 @@ export function RewardWheel({
             <p className="wheel-hint">เชื่อมต่อกระเป๋าเพื่อดูยอดเหรียญและเริ่มหมุนวงล้อ</p>
           ) : !correctNetwork ? (
             <p className="inline-warning" role="status">กรุณาสลับไปยังเครือข่ายทดลอง BNB Smart Chain</p>
-          ) : isRoundExpired ? (
-            <p className="inline-warning" role="status">
-              ⏰ รอบปัจจุบันหมดเวลาแล้ว กรุณากดปุ่มเพื่อปิดรอบ สรุปรางวัล และเปิดรอบใหม่
-            </p>
           ) : approvalNeeded && canSpin ? (
             <p className="wheel-hint">
               คลิกปุ่ม &quot;Approve 10 $PIGGY&quot; เพื่ออนุมัติและเริ่มหมุนวงล้อเมื่อรายการยืนยัน

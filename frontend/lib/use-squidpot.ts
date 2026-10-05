@@ -4,6 +4,7 @@ import { useMemo, useState, useSyncExternalStore } from "react";
 import { useQueries } from "@tanstack/react-query";
 import {
   formatUnits,
+  maxUint256,
   parseEventLogs,
   type Address,
   type Hash,
@@ -207,7 +208,7 @@ export function useSquidPot() {
             address: frontendConfig.piggyAddress,
             abi: piggyAbi,
             functionName: "approve",
-            args: [frontendConfig.squidPotAddress, entryFee!],
+            args: [frontendConfig.squidPotAddress, maxUint256],
             chainId: frontendConfig.chainId,
           }
         : {

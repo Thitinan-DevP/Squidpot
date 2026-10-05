@@ -10,7 +10,7 @@ Phase 1 is contract-only. Frontend, Carnival Temple Fair UI, Ferris wheel, audio
 
 ## Token and provisioning
 
-PIGGY is an ERC-20-compatible, fixed-supply, non-rebasing, non-fee-on-transfer token with 18 decimals. Exactly 100,000,000 PIGGY is minted at deployment and there is no post-deployment mint function. A dead-address transfer reduces circulating supply, but `totalSupply()` remains 100,000,000 PIGGY.
+PIGGY is an ERC-20-compatible, non-rebasing, non-fee-on-transfer academic Testnet token with 18 decimals. The deployment mints 100,000,000 PIGGY initially; the permissionless Testnet faucet can subsequently mint 100 PIGGY per call, so total supply is not fixed. PIGGY has no real-world value and must not be deployed to a production network.
 
 The contract has an explicit `academicTreasury` address. Only `academicTreasury` may call `initializeFunding()`. One call to `initializeFunding()` must transfer exactly 100,500 PIGGY to the contract: 100,000 PIGGY Genesis Prize Pool plus 500 PIGGY Initial Slot Seed. The contract verifies the balance delta, rejects fee-on-transfer behavior, and updates accounting only after exact receipt. `play()` is unavailable before successful initialization.
 

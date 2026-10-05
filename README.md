@@ -2,12 +2,12 @@
 
 > Testnet Academic Prototype — Tokens Have No Real-World Value
 
-SquidPot is an academic prototype scoped to BNB Smart Chain Testnet. Phase 1 established the fixed-supply PIGGY token, SquidPot accounting and lifecycle contract, deployment scripts, and Foundry unit/fuzz/invariant tests. Phase 2 provides the approved frontend. Phase 3 directly integrates Chainlink VRF v2.5. PIGGY and SquidPot are deployed on BNB Testnet; the VRF request, fulfillment, and reward claim flow has completed its first live smoke test. No production credential is included.
+SquidPot is an academic prototype scoped to BNB Smart Chain Testnet. Phase 1 established the PIGGY token, SquidPot accounting and lifecycle contract, deployment scripts, and Foundry unit/fuzz/invariant tests. Phase 2 provides the approved frontend. Phase 3 directly integrates Chainlink VRF v2.5. The local token source now includes a permissionless 100 PIGGY faucet; the currently deployed token predates this change, so it must be redeployed and the frontend address updated before the faucet works on Testnet. No production credential is included.
 
 ## Repository layout
 
 - `docs/MASTER_PROJECT_SPECIFICATION_v3.2.md` — authoritative Phase 1 engineering specification.
-- `contracts/src/PiggyToken.sol` — 100,000,000 PIGGY fixed supply, 18 decimals.
+- `contracts/src/PiggyToken.sol` — 18-decimal PIGGY token with 100 PIGGY permissionless faucet for Testnet.
 - `contracts/src/SquidPot.sol` — initialization, entry allocation, rounds, liabilities, claims, pause, and direct Chainlink VRF v2.5 lifecycle.
 - `contracts/test/mocks/` — official-ABI-compatible deterministic VRF, fee-on-transfer, and failed-burn mocks.
 - `contracts/test/` — unit, fuzz, and invariant coverage.

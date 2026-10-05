@@ -89,6 +89,9 @@ export function useSquidPot() {
   const [transactionHash, setTransactionHash] = useState<Hash | undefined>();
   const [transactionError, setTransactionError] = useState<string | undefined>();
   const [confirmedAction, setConfirmedAction] = useState<string | undefined>();
+  const [faucetPending, setFaucetPending] = useState(false);
+  const [faucetMessage, setFaucetMessage] = useState<string | undefined>();
+  const [faucetError, setFaucetError] = useState<string | undefined>();
 
   const selectedRequestId = activity.find((entry) => entry.requestId)?.requestId;
 
@@ -297,6 +300,44 @@ export function useSquidPot() {
     if (frontendConfig) await switchChainAsync({ chainId: frontendConfig.chainId });
   };
 
+  async function claimFaucet(): Promise<void> {
+    if (!isConnected) {
+      try {
+        await connectWallet();
+        setFaucetError(undefined);
+      } catch (error) {
+        setFaucetError(friendlyWalletError(error));
+      }
+      return;
+    }
+    if (!frontendConfig || !address || !publicClient) return;
+    if (!correctNetwork) {
+      setFaucetError("กรุณาเปลี่ยนเป็นเครือข่ายทดลอง BNB Smart Chain ก่อนรับ PIGGY");
+      return;
+    }
+    if (faucetPending) return;
+    setFaucetPending(true);
+    setFaucetError(undefined);
+    setFaucetMessage(undefined);
+    try {
+      const hash = await writeContractAsync({
+        address: frontendConfig.piggyAddress,
+        abi: piggyAbi,
+        functionName: "faucet",
+        chainId: frontendConfig.chainId,
+      });
+      const receipt = await (publicClient as PublicClient).waitForTransactionReceipt({ hash });
+      if (receipt.status !== "success") throw new Error("Faucet transaction reverted");
+      await reads.refetch();
+      setFaucetMessage("ได้รับ 100 $PIGGY สำเร็จ!");
+      window.setTimeout(() => setFaucetMessage(undefined), 4_000);
+    } catch (error) {
+      setFaucetError(friendlyWalletError(error));
+    } finally {
+      setFaucetPending(false);
+    }
+  }
+
   const readyState = deriveUiState({
     configured: Boolean(frontendConfig),
     connected: isConnected,
@@ -321,6 +362,10 @@ export function useSquidPot() {
     connectWallet,
     disconnect,
     switchToConfiguredChain,
+    claimFaucet,
+    faucetPending,
+    faucetMessage,
+    faucetError,
     correctNetwork,
     chainTimestamp,
     tokenBalance,

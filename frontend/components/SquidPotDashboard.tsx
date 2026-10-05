@@ -78,6 +78,24 @@ export function SquidPotDashboard({ walletPage = false }: { walletPage?: boolean
             switchNetwork={pot.switchToConfiguredChain}
           />
 
+          <section className="card faucet-card" aria-labelledby="faucet-heading">
+            <div>
+              <p className="eyebrow">เหรียญสำหรับทดลอง</p>
+              <h2 id="faucet-heading">ต้องการ PIGGY เพิ่มไหม?</h2>
+              <p className="muted">รับ 100 $PIGGY สำหรับทดลองหมุนวงล้อบน Testnet</p>
+            </div>
+            <button
+              type="button"
+              className="button button-primary"
+              onClick={() => void pot.claimFaucet()}
+              disabled={!frontendConfig || pot.faucetPending}
+            >
+              {pot.faucetPending ? "กำลังรับ PIGGY…" : pot.isConnected ? "รับฟรี 100 $PIGGY" : "เชื่อมต่อกระเป๋าเพื่อรับฟรี 100 $PIGGY"}
+            </button>
+            {pot.faucetMessage && <p className="faucet-toast" role="status">{pot.faucetMessage}</p>}
+            {pot.faucetError && <p className="inline-error" role="alert">{pot.faucetError}</p>}
+          </section>
+
           {(pot.transactionState || pot.transactionError || !pot.isConnected || !pot.correctNetwork) && (
             <TransactionStatus
               state={displayedState}

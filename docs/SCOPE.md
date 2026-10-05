@@ -100,15 +100,14 @@ Do not call it “Production-Grade.”
 
 PIGGY shall be:
 
-- Fixed supply
-- Pre-minted supply of 100,000,000 PIGGY
+- Initial supply of 100,000,000 PIGGY
+- Permissionless faucet minting of exactly 100 PIGGY per call on Testnet only
 - 18 decimals
 - Non-rebasing
 - Non-fee-on-transfer
 - ERC-20-compatible
-- No mint function after deployment
 
-The dead-address transfer reduces circulating supply only. `totalSupply()` remains 100,000,000 PIGGY.
+The dead-address transfer reduces circulating supply. Faucet calls increase `totalSupply()` by 100 PIGGY each time. PIGGY is Testnet-only and has no real-world value.
 
 ## Initial provisioning
 

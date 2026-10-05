@@ -170,8 +170,8 @@ export function MainNavigation() {
           target="_blank"
           rel="noopener noreferrer"
           className="nav-link nav-info-btn"
-          aria-label="สถาปัตยกรรมระบบและกลไกความปลอดภัย"
-          title="สถาปัตยกรรมระบบและกลไกความปลอดภัย"
+          aria-label="เอกสารสถาปัตยกรรมระบบ (Technical Architecture)"
+          title="เอกสารสถาปัตยกรรมระบบ (Technical Architecture)"
         >
           <span className="info-icon" aria-hidden="true"><InfoIcon /></span>
         </a>

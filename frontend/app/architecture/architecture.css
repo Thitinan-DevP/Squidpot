@@ -1,13 +1,14 @@
 /* ────────────────────────────────────────────────────────
-   Architecture / Whitepaper page — Dark Glassmorphism theme
-   Scoped to .arch-* classes; does not affect global styles
+   Architecture / Technical Specification — Frosted Glass Theme
+   Designed for academic rigor & engineering documentation
+   No purple marketing tints; clean neutral glass & technical accents
 ──────────────────────────────────────────────────────── */
 
 /* ── Root & Background ── */
 .arch-root {
   position: relative;
   min-height: 100vh;
-  background: #0a0c10;
+  background: #090d16;
   color: #e2e8f0;
   font-family: var(--font-mitr, "Mitr", "Noto Sans Thai", ui-sans-serif, system-ui, sans-serif);
   font-weight: 300;
@@ -26,22 +27,24 @@
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgb(99 102 241 / 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(99 102 241 / 0.04) 1px, transparent 1px);
-  background-size: 48px 48px;
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
 }
 
 .arch-bg-glow {
   position: absolute;
   border-radius: 50%;
-  filter: blur(100px);
-  opacity: 0.28;
+  filter: blur(120px);
+  opacity: 0.2;
 }
+
 .arch-bg-glow-1 {
   width: 700px; height: 700px;
   top: -200px; right: -200px;
-  background: radial-gradient(circle, #6366f1 0%, transparent 70%);
+  background: radial-gradient(circle, #0284c7 0%, transparent 70%);
 }
+
 .arch-bg-glow-2 {
   width: 600px; height: 600px;
   bottom: 0; left: -150px;
@@ -53,7 +56,7 @@
 .arch-shell {
   position: relative;
   z-index: 1;
-  width: min(100% - 40px, 900px);
+  width: min(100% - 40px, 920px);
   margin-inline: auto;
   padding-block: 56px 80px;
 }
@@ -64,17 +67,22 @@
 }
 
 .arch-header-badge {
-  display: inline-block;
-  padding: 4px 14px;
-  margin-bottom: 18px;
-  background: linear-gradient(135deg, rgb(99 102 241 / 0.25), rgb(139 92 246 / 0.2));
-  border: 1px solid rgb(99 102 241 / 0.45);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 16px;
+  margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 999px;
-  color: #a5b4fc;
+  color: #e0f2fe;
   font-size: 0.72rem;
   font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.25);
 }
 
 .arch-title {
@@ -111,35 +119,38 @@
 .arch-meta-chip {
   display: inline-flex;
   align-items: center;
-  padding: 3px 11px;
-  background: rgb(255 255 255 / 0.06);
-  border: 1px solid rgb(255 255 255 / 0.12);
+  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 999px;
   color: #cbd5e1;
   font-size: 0.74rem;
   font-weight: 400;
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .arch-meta-chip-warn {
-  background: rgb(251 191 36 / 0.1);
-  border-color: rgb(251 191 36 / 0.3);
-  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.35);
+  color: #fde68a;
 }
 
 /* ── TOC ── */
 .arch-toc {
   margin-bottom: 52px;
   padding: 22px 26px;
-  background: rgb(99 102 241 / 0.07);
-  border: 1px solid rgb(99 102 241 / 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 16px;
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.12);
 }
 
 .arch-toc-label {
   margin: 0 0 10px;
-  color: #a5b4fc;
+  color: #38bdf8;
   font-size: 0.72rem;
   font-weight: 500;
   letter-spacing: 0.1em;
@@ -150,7 +161,7 @@
   margin: 0;
   padding-left: 22px;
   display: grid;
-  gap: 5px;
+  gap: 6px;
 }
 
 .arch-toc-list li {
@@ -158,13 +169,16 @@
 }
 
 .arch-toc-list a {
-  color: #93c5fd;
+  color: #7dd3fc;
   text-decoration: none;
   transition: color 0.18s;
 }
-.arch-toc-list a:hover { color: #dbeafe; text-decoration: underline; }
+.arch-toc-list a:hover {
+  color: #bae6fd;
+  text-decoration: underline;
+}
 
-/* ── Content & Sections ── */
+/* ── Content & Sections (Frosted Glass) ── */
 .arch-content {
   display: grid;
   gap: 64px;
@@ -173,10 +187,12 @@
 .arch-section {
   position: relative;
   padding: 36px 40px;
-  background: rgb(255 255 255 / 0.03);
-  border: 1px solid rgb(255 255 255 / 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 20px;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.15);
   overflow: hidden;
 }
 
@@ -185,15 +201,15 @@
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgb(99 102 241 / 0.5), transparent);
+  background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.5), transparent);
 }
 
 .arch-section-number {
   position: absolute;
-  top: 28px; right: 32px;
+  top: 24px; right: 32px;
   font-size: 3.5rem;
   font-weight: 700;
-  color: rgb(99 102 241 / 0.08);
+  color: rgba(255, 255, 255, 0.05);
   line-height: 1;
   user-select: none;
   pointer-events: none;
@@ -205,9 +221,9 @@
   align-items: baseline;
   gap: 10px;
   margin: 0 0 22px;
-  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+  font-size: clamp(1.15rem, 2.5vw, 1.45rem);
   font-weight: 600;
-  color: #f1f5f9;
+  color: #f8fafc;
   line-height: 1.35;
 }
 
@@ -218,11 +234,18 @@
   letter-spacing: 0;
 }
 
+.arch-paragraph {
+  font-size: 0.96rem;
+  color: #cbd5e1;
+  line-height: 1.75;
+  margin-bottom: 20px;
+}
+
 .arch-h3 {
   margin: 28px 0 12px;
   font-size: 1.05rem;
   font-weight: 500;
-  color: #cbd5e1;
+  color: #e2e8f0;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -232,39 +255,166 @@
 .arch-lead {
   color: #94a3b8;
   margin: 0 0 16px;
+  font-size: 0.94rem;
 }
 
-/* ── Info cards ── */
-.arch-card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 14px;
-  margin-top: 16px;
-}
-
-.arch-card {
-  padding: 20px 22px;
-  background: rgb(255 255 255 / 0.04);
-  border: 1px solid rgb(255 255 255 / 0.09);
+/* ── Primary Research Question Callout ── */
+.arch-quote-box {
+  margin: 24px 0 28px;
+  padding: 24px 28px;
+  background: rgba(14, 165, 233, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  border-left: 4px solid #38bdf8;
   border-radius: 14px;
-  transition: border-color 0.2s, background 0.2s;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.15);
 }
-.arch-card:hover {
-  background: rgb(255 255 255 / 0.07);
-  border-color: rgb(99 102 241 / 0.35);
-}
-.arch-card-icon { font-size: 1.6rem; margin-bottom: 10px; }
-.arch-card h3 { margin: 0 0 8px; font-size: 0.95rem; font-weight: 500; color: #e2e8f0; }
-.arch-card p { margin: 0; font-size: 0.85rem; color: #94a3b8; }
 
-/* ── Formula blocks ── */
+.arch-quote-tag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #38bdf8;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 10px;
+}
+
+.arch-quote-text {
+  margin: 0;
+  padding: 0;
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  font-weight: 400;
+  line-height: 1.6;
+  color: #f0f9ff;
+  font-style: italic;
+}
+
+.arch-quote-desc {
+  margin: 12px 0 0;
+  font-size: 0.84rem;
+  color: #94a3b8;
+}
+
+/* ── Problem Items (3 Structural Bottlenecks) ── */
+.arch-problem-list {
+  display: grid;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.arch-problem-item {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  padding: 20px 22px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.2s ease;
+}
+
+.arch-problem-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(56, 189, 248, 0.35);
+}
+
+.arch-problem-num {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+  color: #38bdf8;
+  font-size: 0.88rem;
+  font-weight: 600;
+  backdrop-filter: blur(8px);
+}
+
+.arch-problem-body h3 {
+  margin: 0 0 8px;
+  font-size: 0.98rem;
+  font-weight: 500;
+  color: #f1f5f9;
+}
+
+.arch-problem-body p {
+  margin: 0;
+  font-size: 0.86rem;
+  color: #94a3b8;
+  line-height: 1.65;
+}
+
+.arch-problem-body code {
+  font-family: "Fira Code", Consolas, monospace;
+  font-size: 0.82rem;
+  color: #7dd3fc;
+  background: rgba(56, 189, 248, 0.1);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+/* ── Academic Scope Defense Card ── */
+.arch-defense-card {
+  margin-top: 36px;
+  padding: 24px 28px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.arch-defense-title {
+  margin: 0 0 18px;
+  font-size: 0.94rem;
+  font-weight: 500;
+  color: #e2e8f0;
+  letter-spacing: 0.02em;
+}
+
+.arch-defense-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.arch-defense-item {
+  padding: 16px 18px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+}
+
+.arch-defense-item strong {
+  display: block;
+  font-size: 0.88rem;
+  color: #f8fafc;
+  margin-bottom: 6px;
+}
+
+.arch-defense-item p {
+  margin: 0;
+  font-size: 0.84rem;
+  color: #94a3b8;
+  line-height: 1.65;
+}
+
+/* ── Formula Blocks ── */
 .arch-formula-block {
   margin-top: 16px;
   padding: 20px 24px;
-  background: rgb(15 23 42 / 0.65);
-  border: 1px solid rgb(99 102 241 / 0.25);
-  border-radius: 12px;
-  backdrop-filter: blur(8px);
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
 }
 .arch-margin-top { margin-top: 24px; }
 
@@ -274,28 +424,28 @@
 }
 .arch-formula code {
   font-family: "Fira Code", "Cascadia Code", "SF Mono", Consolas, monospace;
-  font-size: clamp(0.9rem, 2vw, 1.1rem);
-  color: #a5f3fc;
+  font-size: clamp(0.92rem, 2vw, 1.12rem);
+  color: #38bdf8;
   background: none;
   padding: 0;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.02em;
 }
 
-.arch-formula-label { margin: 0 0 10px; color: #64748b; font-size: 0.8rem; }
-.arch-formula-detail { border-top: 1px solid rgb(255 255 255 / 0.07); padding-top: 14px; }
+.arch-formula-label { margin: 0 0 10px; color: #94a3b8; font-size: 0.82rem; }
+.arch-formula-detail { border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 14px; }
 .arch-formula-list {
   margin: 0;
   padding-left: 20px;
   display: grid;
-  gap: 4px;
+  gap: 6px;
 }
-.arch-formula-list li { font-size: 0.84rem; color: #94a3b8; }
+.arch-formula-list li { font-size: 0.85rem; color: #94a3b8; }
 .arch-formula-list code {
   font-family: "Fira Code", "Cascadia Code", Consolas, monospace;
   font-size: 0.82rem;
   color: #7dd3fc;
-  background: rgb(125 211 252 / 0.08);
-  padding: 1px 5px;
+  background: rgba(56, 189, 248, 0.1);
+  padding: 1px 6px;
   border-radius: 4px;
 }
 
@@ -306,28 +456,30 @@
   gap: 16px;
   align-items: flex-start;
   padding: 16px 18px;
-  background: rgb(255 255 255 / 0.03);
-  border: 1px solid rgb(255 255 255 / 0.07);
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: 12px;
+  backdrop-filter: blur(8px);
 }
 .arch-step-num {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px; height: 28px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  border-radius: 50%;
-  color: #fff;
-  font-size: 0.8rem;
-  font-weight: 600;
+  padding: 3px 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: #e2e8f0;
+  font-size: 0.74rem;
+  font-weight: 500;
   line-height: 1;
 }
 .arch-step code {
   font-family: "Fira Code", Consolas, monospace;
   font-size: 0.8rem;
   color: #7dd3fc;
-  background: rgb(125 211 252 / 0.08);
+  background: rgba(56, 189, 248, 0.1);
   padding: 1px 5px;
   border-radius: 4px;
 }
@@ -337,8 +489,10 @@
 .arch-table-wrapper {
   margin-top: 16px;
   overflow-x: auto;
-  border-radius: 12px;
-  border: 1px solid rgb(255 255 255 / 0.08);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(10px);
 }
 
 .arch-table {
@@ -349,34 +503,34 @@
 }
 
 .arch-table thead tr {
-  background: rgb(99 102 241 / 0.12);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .arch-table th {
   padding: 12px 14px;
   text-align: left;
-  font-size: 0.75rem;
+  font-size: 0.74rem;
   font-weight: 500;
   color: #94a3b8;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   white-space: nowrap;
-  border-bottom: 1px solid rgb(255 255 255 / 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
 }
 
 .arch-table td {
   padding: 12px 14px;
   color: #cbd5e1;
-  border-bottom: 1px solid rgb(255 255 255 / 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   vertical-align: middle;
 }
 
 .arch-table tr:last-child td { border-bottom: none; }
-.arch-table tr:hover td { background: rgb(255 255 255 / 0.025); }
+.arch-table tr:hover td { background: rgba(255, 255, 255, 0.035); }
 
-.arch-table-highlight td { background: rgb(251 191 36 / 0.05); }
+.arch-table-highlight td { background: rgba(245, 158, 11, 0.06); }
 .arch-table-total td {
-  background: rgb(99 102 241 / 0.1);
+  background: rgba(255, 255, 255, 0.07);
   color: #e2e8f0;
   font-weight: 500;
 }
@@ -391,10 +545,10 @@
   font-weight: 500;
   white-space: nowrap;
 }
-.arch-badge-none { background: rgb(100 116 139 / 0.25); color: #94a3b8; border: 1px solid rgb(100 116 139 / 0.3); }
-.arch-badge-small { background: rgb(34 197 94 / 0.15); color: #86efac; border: 1px solid rgb(34 197 94 / 0.3); }
-.arch-badge-medium { background: rgb(59 130 246 / 0.15); color: #93c5fd; border: 1px solid rgb(59 130 246 / 0.3); }
-.arch-badge-large { background: rgb(234 179 8 / 0.15); color: #fde047; border: 1px solid rgb(234 179 8 / 0.35); }
+.arch-badge-none { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.25); }
+.arch-badge-small { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.3); }
+.arch-badge-medium { background: rgba(14, 165, 233, 0.15); color: #7dd3fc; border: 1px solid rgba(14, 165, 233, 0.3); }
+.arch-badge-large { background: rgba(245, 158, 11, 0.15); color: #fde68a; border: 1px solid rgba(245, 158, 11, 0.35); }
 
 /* ── VRF Flow Diagram ── */
 .arch-flow {
@@ -404,9 +558,11 @@
   gap: 0;
   margin-top: 28px;
   padding: 24px;
-  background: rgb(15 23 42 / 0.5);
-  border: 1px solid rgb(255 255 255 / 0.07);
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .arch-flow-node {
@@ -414,29 +570,43 @@
   align-items: center;
   gap: 16px;
   width: 100%;
-  max-width: 500px;
+  max-width: 520px;
   padding: 16px 20px;
   border-radius: 12px;
-  border: 1px solid rgb(255 255 255 / 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.035);
+  backdrop-filter: blur(8px);
 }
-.arch-flow-node p { margin: 4px 0 0; font-size: 0.82rem; color: #64748b; }
+.arch-flow-node p { margin: 4px 0 0; font-size: 0.82rem; color: #94a3b8; }
 .arch-flow-node strong { font-size: 0.9rem; font-weight: 500; color: #e2e8f0; }
 .arch-flow-node code {
   font-family: "Fira Code", Consolas, monospace;
   font-size: 0.8rem;
   color: #7dd3fc;
-  background: rgb(125 211 252 / 0.1);
+  background: rgba(56, 189, 248, 0.1);
   padding: 1px 5px;
   border-radius: 4px;
 }
 
-.arch-flow-node-user { background: rgb(99 102 241 / 0.12); border-color: rgb(99 102 241 / 0.3); }
-.arch-flow-node-contract { background: rgb(139 92 246 / 0.1); border-color: rgb(139 92 246 / 0.3); }
-.arch-flow-node-vrf { background: rgb(16 185 129 / 0.1); border-color: rgb(16 185 129 / 0.3); }
-.arch-flow-node-callback { background: rgb(234 179 8 / 0.08); border-color: rgb(234 179 8 / 0.25); }
-.arch-flow-node-result { background: rgb(34 197 94 / 0.1); border-color: rgb(34 197 94 / 0.3); }
+.arch-flow-node-user { background: rgba(255, 255, 255, 0.06); border-color: rgba(255, 255, 255, 0.16); }
+.arch-flow-node-vrf { background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.28); }
+.arch-flow-node-callback { background: rgba(245, 158, 11, 0.08); border-color: rgba(245, 158, 11, 0.25); }
+.arch-flow-node-result { background: rgba(56, 189, 248, 0.08); border-color: rgba(56, 189, 248, 0.28); }
 
-.arch-flow-icon { font-size: 1.5rem; flex: 0 0 auto; }
+.arch-flow-icon-plain {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 9px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: #f8fafc;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
 
 .arch-flow-arrow {
   display: flex;
@@ -450,22 +620,22 @@
   content: "";
   width: 2px;
   height: 28px;
-  background: linear-gradient(180deg, rgb(99 102 241 / 0.5), rgb(99 102 241 / 0.2));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.15));
 }
 .arch-flow-arrow::after {
   content: "▼";
-  color: rgb(99 102 241 / 0.7);
-  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.65rem;
   margin-top: -6px;
 }
 .arch-flow-arrow-return::before {
-  background: linear-gradient(180deg, rgb(16 185 129 / 0.5), rgb(16 185 129 / 0.2));
+  background: linear-gradient(180deg, rgba(16, 185, 129, 0.5), rgba(16, 185, 129, 0.2));
 }
-.arch-flow-arrow-return::after { color: rgb(16 185 129 / 0.7); }
+.arch-flow-arrow-return::after { color: rgba(16, 185, 129, 0.7); }
 
 .arch-flow-label {
   font-size: 0.74rem;
-  color: #64748b;
+  color: #94a3b8;
   text-align: center;
   max-width: 280px;
 }
@@ -473,7 +643,7 @@
   font-family: "Fira Code", Consolas, monospace;
   font-size: 0.75rem;
   color: #7dd3fc;
-  background: rgb(125 211 252 / 0.08);
+  background: rgba(56, 189, 248, 0.08);
   padding: 1px 4px;
   border-radius: 3px;
 }
@@ -486,27 +656,28 @@
 }
 .arch-flow-steps li { font-size: 0.8rem; color: #94a3b8; }
 
-/* ── Info box ── */
+/* ── Info Box ── */
 .arch-info-box {
   margin-top: 22px;
   padding: 18px 20px;
-  background: rgb(16 185 129 / 0.07);
-  border: 1px solid rgb(16 185 129 / 0.25);
-  border-left: 3px solid #10b981;
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-left: 3px solid #38bdf8;
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
 }
-.arch-info-box strong { color: #6ee7b7; font-size: 0.9rem; }
-.arch-info-box p { margin: 8px 0 0; font-size: 0.84rem; color: #94a3b8; }
+.arch-info-box strong { color: #38bdf8; font-size: 0.9rem; }
+.arch-info-box p { margin: 8px 0 0; font-size: 0.84rem; color: #94a3b8; line-height: 1.6; }
 .arch-info-box code {
   font-family: "Fira Code", Consolas, monospace;
   font-size: 0.8rem;
   color: #7dd3fc;
-  background: rgb(125 211 252 / 0.1);
+  background: rgba(56, 189, 248, 0.1);
   padding: 1px 5px;
   border-radius: 4px;
 }
 
-/* ── Security cards ── */
+/* ── Security Cards ── */
 .arch-security-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -516,49 +687,61 @@
 
 .arch-security-card {
   padding: 22px 24px;
-  background: rgb(255 255 255 / 0.03);
-  border: 1px solid rgb(255 255 255 / 0.08);
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 14px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   transition: border-color 0.2s, background 0.2s;
 }
 .arch-security-card:hover {
-  background: rgb(255 255 255 / 0.055);
-  border-color: rgb(99 102 241 / 0.3);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(56, 189, 248, 0.3);
 }
 .arch-security-card-highlight {
-  background: rgb(99 102 241 / 0.06);
-  border-color: rgb(99 102 241 / 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(56, 189, 248, 0.25);
 }
 .arch-security-card-highlight:hover {
-  border-color: rgb(99 102 241 / 0.45);
+  border-color: rgba(56, 189, 248, 0.45);
 }
 
-.arch-security-icon { font-size: 1.5rem; margin-bottom: 10px; }
-.arch-security-card h3 { margin: 0 0 10px; font-size: 0.92rem; font-weight: 500; color: #e2e8f0; }
+.arch-security-label {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #38bdf8;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.arch-security-card h3 { margin: 0 0 10px; font-size: 0.92rem; font-weight: 500; color: #f1f5f9; }
 .arch-security-card p { margin: 0; font-size: 0.83rem; color: #94a3b8; line-height: 1.65; }
 .arch-security-card code {
   font-family: "Fira Code", Consolas, monospace;
   font-size: 0.79rem;
   color: #7dd3fc;
-  background: rgb(125 211 252 / 0.1);
+  background: rgba(56, 189, 248, 0.1);
   padding: 1px 5px;
   border-radius: 4px;
 }
 
-/* ── Data stack layers ── */
+/* ── Data Stack Layers ── */
 .arch-data-stack {
   display: grid;
   gap: 14px;
   margin-top: 16px;
-  counter-reset: layers;
 }
 
 .arch-data-layer {
   display: grid;
   grid-template-columns: 180px 1fr;
   gap: 0;
-  border: 1px solid rgb(255 255 255 / 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 14px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   overflow: hidden;
 }
 
@@ -567,35 +750,35 @@
   align-items: center;
   justify-content: center;
   padding: 18px 16px;
-  background: rgb(99 102 241 / 0.1);
-  color: #a5b4fc;
+  background: rgba(255, 255, 255, 0.05);
+  color: #e2e8f0;
   font-size: 0.72rem;
   font-weight: 500;
   text-align: center;
   letter-spacing: 0.03em;
   line-height: 1.4;
-  border-right: 1px solid rgb(99 102 241 / 0.15);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .arch-data-content {
   padding: 18px 22px;
-  background: rgb(255 255 255 / 0.02);
+  background: rgba(255, 255, 255, 0.02);
 }
-.arch-data-content strong { color: #e2e8f0; font-size: 0.92rem; }
+.arch-data-content strong { color: #f1f5f9; font-size: 0.92rem; }
 .arch-data-content p { margin: 6px 0 0; font-size: 0.84rem; color: #94a3b8; }
 
 /* ── Footer ── */
 .arch-footer {
   margin-top: 80px;
   padding-top: 28px;
-  border-top: 1px solid rgb(255 255 255 / 0.07);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 14px;
   font-size: 0.8rem;
-  color: #475569;
+  color: #64748b;
 }
 
 .arch-footer-warn { color: #f59e0b; }
@@ -605,18 +788,19 @@
   align-items: center;
   gap: 6px;
   padding: 7px 16px;
-  background: rgb(255 255 255 / 0.05);
-  border: 1px solid rgb(255 255 255 / 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 999px;
-  color: #93c5fd;
+  color: #e2e8f0;
   text-decoration: none;
   font-size: 0.83rem;
+  backdrop-filter: blur(8px);
   transition: background 0.18s, border-color 0.18s;
 }
 .arch-back-link:hover {
-  background: rgb(99 102 241 / 0.15);
-  border-color: rgb(99 102 241 / 0.4);
-  color: #bfdbfe;
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
 }
 
 /* ── Responsive ── */
@@ -625,5 +809,5 @@
   .arch-section { padding: 24px 20px; }
   .arch-section-number { display: none; }
   .arch-data-layer { grid-template-columns: 1fr; }
-  .arch-data-label { border-right: none; border-bottom: 1px solid rgb(99 102 241 / 0.15); }
+  .arch-data-label { border-right: none; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
 }

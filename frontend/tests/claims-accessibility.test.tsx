@@ -11,12 +11,15 @@ describe("claims and accessible responsive shell", () => {
   it("disables empty claims and invokes the separate pull-claim action", async () => {
     const onClaim = vi.fn();
     const user = userEvent.setup();
-    render(<ClaimsPanel slot={BigInt(0)} previous={BigInt(125)} prize={BigInt(0)} busy={false} onClaim={onClaim} />);
-    const buttons = screen.getAllByRole("button");
-    expect(buttons[0]).toBeDisabled();
-    expect(buttons[2]).toBeDisabled();
-    await user.click(buttons[1]);
-    expect(onClaim).toHaveBeenCalledWith("claim-previous");
+    const { rerender } = render(<ClaimsPanel slot={BigInt(0)} busy={false} onClaim={onClaim} />);
+    const emptyBtn = screen.getByRole("button", { name: "ยังไม่มีรางวัล" });
+    expect(emptyBtn).toBeDisabled();
+
+    rerender(<ClaimsPanel slot={BigInt(100) * BigInt(10 ** 18)} busy={false} onClaim={onClaim} />);
+    const claimBtn = screen.getByRole("button", { name: "ถอนรางวัล" });
+    expect(claimBtn).toBeEnabled();
+    await user.click(claimBtn);
+    expect(onClaim).toHaveBeenCalledWith("claim-slot");
   });
 
   it("provides keyboard navigation and visible focus styling", async () => {

@@ -75,14 +75,16 @@ export function SquidPotDashboard({ walletPage = false }: { walletPage?: boolean
             switchNetwork={pot.switchToConfiguredChain}
           />
 
-          <TransactionStatus
-            state={displayedState}
-            hash={pot.transactionHash}
-            error={pot.transactionError}
-            description={stateDescription}
-            confirmedMessage={confirmedMessage}
-            secondaryMessage={requestMessage && (displayedState === "VRF_WAITING" || displayedState === "VRF_FULFILLED" || displayedState === "VRF_EXPIRED") ? requestMessage : undefined}
-          />
+          {(pot.transactionState || pot.transactionError || !pot.isConnected || !pot.correctNetwork) && (
+            <TransactionStatus
+              state={displayedState}
+              hash={pot.transactionHash}
+              error={pot.transactionError}
+              description={stateDescription}
+              confirmedMessage={confirmedMessage}
+              secondaryMessage={requestMessage && (displayedState === "VRF_WAITING" || displayedState === "VRF_EXPIRED") ? requestMessage : undefined}
+            />
+          )}
 
           <section className="card" aria-labelledby="wallet-values-heading">
             <p className="eyebrow">ข้อมูลจากกระเป๋า</p>
@@ -93,7 +95,17 @@ export function SquidPotDashboard({ walletPage = false }: { walletPage?: boolean
               <div><dt>ยอดที่อนุมัติให้สัญญาใช้</dt><dd>{formatPiggy(pot.allowance)}</dd></div>
               <div><dt>เครือข่าย</dt><dd>{pot.correctNetwork ? "เครือข่ายทดลอง BNB Smart Chain" : "ยังไม่ได้เชื่อมต่อเครือข่ายทดลอง"}</dd></div>
             </dl>
-            {pot.approvalNeeded && <button className="button button-primary" disabled={!pot.correctNetwork || isActive} onClick={() => void pot.executeWrite("approve", "approve")}>อนุมัติใช้ 10 PIGGY</button>}
+            {pot.approvalNeeded && (
+              <div className="wallet-approval-zone">
+                <button
+                  className="button button-primary wallet-approve-btn"
+                  disabled={!pot.correctNetwork || isActive}
+                  onClick={() => void pot.executeWrite("approve", "approve")}
+                >
+                  อนุมัติใช้ PIGGY
+                </button>
+              </div>
+            )}
             {pot.isConnected && !pot.correctNetwork && <p className="muted">เปลี่ยนเครือข่ายในกระเป๋าเป็น BNB Smart Chain Testnet ก่อนทำรายการ</p>}
           </section>
 

@@ -2,7 +2,7 @@
 
 > Testnet Academic Prototype — Tokens Have No Real-World Value
 
-SquidPot is an academic prototype scoped to BNB Smart Chain Testnet. Phase 1 established the PIGGY token, SquidPot accounting and lifecycle contract, deployment scripts, and Foundry unit/fuzz/invariant tests. Phase 2 provides the approved frontend. Phase 3 directly integrates Chainlink VRF v2.5. The local token source now includes a permissionless 100 PIGGY faucet; the currently deployed token predates this change, so it must be redeployed and the frontend address updated before the faucet works on Testnet. No production credential is included.
+SquidPot is an academic prototype scoped to BNB Smart Chain Testnet. Phase 1 established the PIGGY token, SquidPot accounting and lifecycle contract, deployment scripts, and Foundry unit/fuzz/invariant tests. Phase 2 provides the approved frontend. Phase 3 directly integrates Chainlink VRF v2.5. The permissionless 100 PIGGY faucet token and its matching SquidPot have been deployed on BNB Testnet. No production credential is included.
 
 ## Repository layout
 
@@ -11,7 +11,7 @@ SquidPot is an academic prototype scoped to BNB Smart Chain Testnet. Phase 1 est
 - `contracts/src/SquidPot.sol` — initialization, entry allocation, rounds, liabilities, claims, pause, and direct Chainlink VRF v2.5 lifecycle.
 - `contracts/test/mocks/` — official-ABI-compatible deterministic VRF, fee-on-transfer, and failed-burn mocks.
 - `contracts/test/` — unit, fuzz, and invariant coverage.
-- `contracts/script/` — BNB Smart Chain Testnet deployment and controlled smoke-test scripts. `PiggyToken` is deployed at `0x4c8d2990Ce2C99E3C5F4B765D0359FcAd210b84b`; SquidPot is deployed at `0x5F5db49C917257BD6bb21761EeEB97beF00A94c4`.
+- `contracts/script/` — BNB Smart Chain Testnet deployment and controlled smoke-test scripts. Current Faucet-enabled addresses are recorded in `docs/FAUCET_TESTNET_DEPLOYMENT.md`.
 - `contracts/DEPENDENCIES.md` — exact vendored OpenZeppelin, forge-std, and Chainlink revisions and refresh instructions.
 - `frontend/` — responsive Next.js interface, single on-chain PIGGY reward wheel, direct Wagmi/Viem contract access, transaction states, and frontend tests.
 - `docs/FRONTEND_SCOPE_CHANGE.md` — approved replacement of the earlier frontend directions with the Single On-Chain PIGGY Reward Wheel.

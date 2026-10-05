@@ -7,8 +7,8 @@ export const CONFIGURATION_MESSAGE =
 const isTestEnv = process.env.NODE_ENV === "test" || Boolean(process.env.VITEST);
 
 const raw = {
-  piggyAddress: process.env.NEXT_PUBLIC_PIGGY_TOKEN_ADDRESS || (!isTestEnv ? "0x4c8d2990Ce2C99E3C5F4B765D0359FcAd210b84b" : undefined),
-  squidPotAddress: process.env.NEXT_PUBLIC_SQUIDPOT_ADDRESS || (!isTestEnv ? "0x18e3ef9f16a66c4d890dd6688348d3428809d29c" : undefined),
+  piggyAddress: process.env.NEXT_PUBLIC_PIGGY_TOKEN_ADDRESS || (!isTestEnv ? "0x2dD78662B94B7B92EadC9E6903A80bBd3DbD9696" : undefined),
+  squidPotAddress: process.env.NEXT_PUBLIC_SQUIDPOT_ADDRESS || (!isTestEnv ? "0x336d4f4f6Cba170b4d2ad7D058da064248281778" : undefined),
   chainId: process.env.NEXT_PUBLIC_CHAIN_ID || (!isTestEnv ? "97" : undefined),
   rpcUrl: process.env.NEXT_PUBLIC_RPC_URL || (!isTestEnv ? "https://data-seed-prebsc-1-s1.bnbchain.org:8545" : undefined),
 };
